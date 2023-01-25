@@ -1,0 +1,95 @@
+[build-system]
+requires = ["hatchling", "hatch-regex-commit"]
+build-backend = "hatchling.build"
+
+[project]
+name = "nextline-schedule"
+description = 'A plugin of nextline-graphql. An interface to the SO scheduler.'
+readme = "README.md"
+requires-python = ">=3.8"
+license = "MIT"
+keywords = []
+authors = [
+  { name = "Simons Observatory", email = "so_software@simonsobservatory.org" },
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+]
+dependencies = []
+dynamic = ["version"]
+
+[project.optional-dependencies]
+host = ["nextline-graphql>=0.4.1"]
+tests = [
+  "async-asgi-testclient>=1.4",
+  "pytest-asyncio>=0.18",
+  "pytest-cov>=3.0",
+  "pytest-timeout>=2.1",
+  "pytest>=7.0",
+]
+
+
+[project.urls]
+Documentation = "https://github.com/simonsobs/nextline-schedule#readme"
+Issues = "https://github.com/simonsobs/nextline-schedule/issues"
+Source = "https://github.com/simonsobs/nextline-schedule"
+
+[project.entry-points."nextline"]
+schedule = "nextline_schedule:Plugin"
+
+[tool.hatch.version]
+source = "regex_commit"
+path = "src/nextline_schedule/__about__.py"
+tag_sign = false
+
+[tool.hatch.envs.default]
+dependencies = ["pytest", "pytest-cov"]
+[tool.hatch.envs.default.scripts]
+cov = "pytest --cov-report=term-missing --cov-config=pyproject.toml --cov=src/nextline_schedule --cov=tests {args}"
+no-cov = "cov --no-cov {args}"
+
+[[tool.hatch.envs.test.matrix]]
+python = ["38", "39", "310", "311"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+timeout = 60
+addopts = "--doctest-modules"
+# doctest_optionflags = ["ELLIPSIS", "NORMALIZE_WHITESPACE",]
+doctest_optionflags = ["ELLIPSIS"]
+norecursedirs = "build"
+
+[tool.black]
+skip-string-normalization = true
+target_version = ['py38', 'py39', 'py310', 'py311']
+exclude = '''(?x)(
+   src/nextline_schedule/aalembic/versions/.*\.py$
+)'''
+
+[tool.coverage.run]
+branch = true
+parallel = true
+omit = ["src/nextline_schedule/__about__.py"]
+
+[tool.coverage.report]
+exclude_lines = ["no cov", "if __name__ == .__main__.:", "if TYPE_CHECKING:"]
+
+[tool.isort]
+profile = "black"
+
+[tool.mypy]
+plugins = "strawberry.ext.mypy_plugin"
+exclude = '''(?x)(
+    src/nextline_schedule/alembic/versions/.*\.py$
+)'''
+
+[[tool.mypy.overrides]]
+module = ["dynaconf.*", "async_asgi_testclient.*", "snapshottest.*"]
+ignore_missing_imports = true
