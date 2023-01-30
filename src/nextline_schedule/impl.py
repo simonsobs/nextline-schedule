@@ -1,7 +1,9 @@
 import asyncio
 import random
 from contextlib import asynccontextmanager
+from datetime import datetime, timedelta
 
+import httpx
 from nextline import Nextline
 from rich import print
 
@@ -28,7 +30,7 @@ async def subscribe_run_info(nextline: Nextline):
 
     while True:
         # statement = generate_statement(nextline.run_no + 1)
-        statement = pull_from_scheduler()
+        statement = await pull_from_scheduler()
         await nextline.reset(statement=statement)
         await asyncio.sleep(1)
         await nextline.run()
@@ -62,10 +64,7 @@ def generate_statement(run_no: int) -> str:
     return s
 
 
-def pull_from_scheduler():
-    from datetime import datetime, timedelta
-
-    import requests
+async def pull_from_scheduler():
 
     # https://github.com/simonsobs/so-scheduler/blob/master/readme.md#schedule-api
     API_URL = 'https://scheduler-uobd.onrender.com/api/v1/schedule/'
@@ -78,6 +77,7 @@ def pull_from_scheduler():
     t1_fmt = t1.strftime('%Y-%m-%d %H:%M')
     data = {"t0": t0_fmt, "t1": t1_fmt, "policy": "dummy"}
     print(data)
-    response = requests.post(API_URL, json=data)
+    async with httpx.AsyncClient() as client:
+        response = await client.post(API_URL, json=data)
     print(response.json())
     return response.json()['commands']
