@@ -22,7 +22,7 @@ classifiers = [
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
 ]
-dependencies = []
+dependencies = ["transitions>=0.9"]
 dynamic = ["version"]
 
 [project.optional-dependencies]
