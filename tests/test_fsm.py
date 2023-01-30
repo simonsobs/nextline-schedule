@@ -63,6 +63,19 @@ async def test_transitions() -> None:
     assert machine.is_off()
 
 
+async def test_ignore_invalid_triggers() -> None:
+    machine = build_state_machine(model=Machine.self_literal)
+    assert machine.is_off()
+    await machine.on_finished()  # invalid trigger
+
+    assert machine.is_off()
+    await machine.turn_on()
+    await machine.on_initialized()
+    assert machine.is_auto_pulling()
+    await machine.on_finished()  # invalid trigger
+    assert machine.is_auto_pulling()
+
+
 def test_restore_from_markup():
     machine = build_state_machine(markup=True)
     assert isinstance(machine.markup, dict)
