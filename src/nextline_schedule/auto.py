@@ -1,5 +1,5 @@
 import asyncio
-from typing import Any, Callable, Coroutine
+from typing import Any, Callable, Coroutine, Set
 
 from nextline import Nextline
 
@@ -25,51 +25,86 @@ class AutoMode:
     ):
         self._nextline = nextline
         self._request_statement = request_statement
+        self._tasks: Set[asyncio.Task] = set()
+
         machine = build_state_machine(self)
         machine.after_state_change = self.after_state_change.__name__  # type: ignore
 
-    async def after_state_change(self) -> None:
-        print(f'after_state_change: {self.state}')  # type: ignore
+    async def on_enter_waiting(self) -> None:
+        async def wait() -> None:
+            async for state in self._nextline.subscribe_state():
+                if state == 'initialized':
+                    await self.on_initialized()  # type: ignore
+                    break
+                if state == 'finished':
+                    await self.on_finished()  # type: ignore
+                    break
+            return
+
+        task = asyncio.create_task(wait())
+        self._tasks.add(task)
 
     async def on_enter_auto_pulling(self) -> None:
-        print('on_enter_auto_pulling')
-        statement = await self._request_statement()
-        print(statement)
-        await self._nextline.reset(statement=statement)
-        await self.run()  # type: ignore
+        async def pull() -> None:
+            statement = await self._request_statement()
+            await self._nextline.reset(statement=statement)
+            await self.run()  # type: ignore
+
+        task = asyncio.create_task(pull())
+        self._tasks.add(task)
 
     async def on_enter_auto_running(self) -> None:
-        print('on_enter_auto_running')
-        await asyncio.gather(self._nextline.run(), self.continue_on_prompt())
-        print('there')
+        async def run() -> None:
+            async def run_and_wait() -> None:
+                await self._nextline.run()
+                if self._nextline.exception() is not None:
+                    await self.on_raised()  # type: ignore
+                else:
+                    await self.on_finished()  # type: ignore
 
-    async def continue_on_prompt(self) -> None:
-        async for prompt_info in self._nextline.subscribe_prompt_info():
-            if prompt_info.trace_call_end:  # TODO: remove when unnecessary
-                continue
-            if not prompt_info.open:
-                continue
-            break
-        self._nextline.send_pdb_command(
-            command='continue',
-            prompt_no=prompt_info.prompt_no,
-            trace_no=prompt_info.trace_no,
+            async def continue_on_prompt(nextline: Nextline) -> None:
+                async for prompt_info in nextline.subscribe_prompt_info():
+                    if prompt_info.trace_call_end:  # TODO: remove when unnecessary
+                        continue
+                    if not prompt_info.open:
+                        continue
+                    break
+                nextline.send_pdb_command(
+                    command='continue',
+                    prompt_no=prompt_info.prompt_no,
+                    trace_no=prompt_info.trace_no,
+                )
+
+            await asyncio.gather(
+                run_and_wait(),
+                continue_on_prompt(self._nextline),
+                # monitor(),
+            )
+
+        task = asyncio.create_task(run())
+        self._tasks.add(task)
+
+    async def after_state_change(self) -> None:
+        await self._collect_tasks()
+
+    async def _collect_tasks(self) -> None:
+        if not self._tasks:
+            return
+        done, _ = await asyncio.wait(
+            self._tasks, timeout=0, return_when=asyncio.FIRST_COMPLETED
         )
+        self._tasks -= done
 
-    async def monitor_nextline_states(self) -> None:
-        async for state in self._nextline.subscribe_state():
-            if state == 'initialized':
-                await self.on_initialized()  # type: ignore
-                continue
-            if state == 'finished':
-                await self.on_finished()  # type: ignore
-                continue
-        return
+    async def start(self) -> None:
+        pass
+
+    async def close(self) -> None:
+        await self._collect_tasks()
 
     async def __aenter__(self) -> 'AutoMode':
-        self._monitor = asyncio.create_task(self.monitor_nextline_states())
+        await self.start()
         return self
 
     async def __aexit__(self, exc_type, exc_value, traceback) -> None:
         del exc_type, exc_value, traceback
-        await self._monitor
+        await self.close()
