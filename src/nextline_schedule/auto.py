@@ -1,9 +1,9 @@
 import asyncio
+from typing import Any, Callable, Coroutine
 
 from nextline import Nextline
 
 from nextline_schedule.fsm import build_state_machine
-from nextline_schedule.funcs import generate_statement
 
 
 class AutoMode:
@@ -14,8 +14,13 @@ class AutoMode:
     'off'
     '''
 
-    def __init__(self, nextline: Nextline):
+    def __init__(
+        self,
+        nextline: Nextline,
+        request_statement: Callable[[], Coroutine[Any, Any, str]],
+    ):
         self._nextline = nextline
+        self._request_statement = request_statement
         machine = build_state_machine(self)
         machine.after_state_change = self.after_state_change.__name__  # type: ignore
 
@@ -24,7 +29,7 @@ class AutoMode:
 
     async def on_enter_auto_pulling(self) -> None:
         print('on_enter_auto_pulling')
-        statement = await generate_statement(self._nextline.run_no + 1)
+        statement = await self._request_statement()
         print(statement)
         await self._nextline.reset(statement=statement)
         await self.run()  # type: ignore
