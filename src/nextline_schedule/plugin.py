@@ -2,10 +2,12 @@ from pathlib import Path
 from typing import Mapping, MutableMapping, Optional, Tuple
 
 from dynaconf import Dynaconf, Validator
+from nextline import Nextline
 from nextlinegraphql.custom.decorator import asynccontextmanager
 from nextlinegraphql.hook import spec
-from starlette.applications import Starlette
 
+from .auto import AutoMode
+from .funcs import generate_statement
 from .schema import Mutation, Query, Subscription
 
 HERE = Path(__file__).resolve().parent
@@ -41,9 +43,23 @@ class Plugin:
 
     @spec.hookimpl
     @asynccontextmanager
-    async def lifespan(self, app: Starlette, context: Mapping):
-        yield
+    async def lifespan(self, context: Mapping):
+        nextline = context['nextline']
+        request_statement = RequestStatement(nextline=nextline)
+        self._auto_mode = AutoMode(
+            nextline=nextline, request_statement=request_statement
+        )
+        async with self._auto_mode as y:
+            yield y
 
     @spec.hookimpl
     def update_strawberry_context(self, context: MutableMapping) -> None:
-        pass
+        context['auto_mode'] = self._auto_mode
+
+
+class RequestStatement:
+    def __init__(self, nextline: Nextline):
+        self._nextline = nextline
+
+    async def __call__(self) -> str:
+        return generate_statement(run_no=self._nextline.run_no + 1)
