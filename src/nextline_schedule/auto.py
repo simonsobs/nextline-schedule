@@ -9,7 +9,11 @@ from nextline_schedule.fsm import build_state_machine
 class AutoMode:
     '''A model of the finite state machine.
 
-    >>> auto_mode = AutoMode(nextline=Nextline(statement=''))
+    >>> nextline = Nextline(statement='')
+    >>> async def request_statement() -> str:
+    ...     return ''
+
+    >>> auto_mode = AutoMode(nextline=nextline, request_statement=request_statement)
     >>> auto_mode.state
     'off'
     '''
