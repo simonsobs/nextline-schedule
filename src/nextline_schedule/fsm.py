@@ -85,6 +85,7 @@ def build_state_machine(model=None, graph=False, asyncio=True, markup=False) -> 
             ['on_raised', 'running', 'raised'],
         ],
         'initial': 'pulling',
+        'queued': True,
         'ignore_invalid_triggers': True,
     }
 
