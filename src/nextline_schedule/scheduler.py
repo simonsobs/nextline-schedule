@@ -5,7 +5,7 @@ import httpx
 from nextline import Nextline
 
 
-def generate_statement() -> str:
+def generate_dummy_statement() -> str:
     s = '\n'.join(
         f'time.sleep({random.uniform(1, 3):.2})' for _ in range(random.randint(5, 10))
     )
@@ -20,11 +20,9 @@ def generate_statement() -> str:
     return s
 
 
-def DummyRequestStatement():
-    async def f() -> str:
-        return generate_statement()
-
-    return f
+class DummyRequestStatement:
+    async def __call__(self) -> str:
+        return generate_dummy_statement()
 
 
 # https://github.com/simonsobs/so-scheduler/blob/master/readme.md#schedule-api
