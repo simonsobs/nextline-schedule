@@ -64,3 +64,4 @@ class Plugin:
     @spec.hookimpl
     def update_strawberry_context(self, context: MutableMapping) -> None:
         context['auto_mode'] = self._auto_mode
+        context['scheduler'] = self._request_statement
