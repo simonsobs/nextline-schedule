@@ -4,7 +4,7 @@
 # https://github.com/rochacbruno/learndynaconf/tree/main/configs
 
 [schedule]
-api = "https://scheduler-uobd.onrender.com"
+api = "https://scheduler-uobd.onrender.com/api/v1/schedule/"
 length_minutes = 1
 policy = "dummy"
 
