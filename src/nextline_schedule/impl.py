@@ -7,17 +7,33 @@ import httpx
 from nextline import Nextline
 from rich import print
 
+from .auto import AutoMode
+from .funcs import generate_statement
+
 
 @asynccontextmanager
 async def schedule(nextline: Nextline):
-    task = asyncio.gather(
-        subscribe_run_info(nextline),
-        subscribe_prompt_info(nextline),
-    )
-    try:
-        yield
-    finally:
-        await task
+    # task = asyncio.gather(
+    #     subscribe_run_info(nextline),
+    #     subscribe_prompt_info(nextline),
+    # )
+    # try:
+    #     yield
+    # finally:
+    #     await task
+
+    request_statement = RequestStatement(nextline=nextline)
+    auto_mode = AutoMode(nextline=nextline, request_statement=request_statement)
+    async with auto_mode:
+        yield auto_mode
+
+
+class RequestStatement:
+    def __init__(self, nextline: Nextline):
+        self._nextline = nextline
+
+    async def __call__(self) -> str:
+        return generate_statement(run_no=self._nextline.run_no + 1)
 
 
 async def subscribe_run_info(nextline: Nextline):
