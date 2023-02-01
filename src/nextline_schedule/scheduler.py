@@ -4,9 +4,9 @@ from nextline import Nextline
 from .funcs import generate_statement
 
 
-def DummyRequestStatement(nextline: Nextline):
+def DummyRequestStatement():
     async def f() -> str:
-        return generate_statement(run_no=nextline.run_no + 1)
+        return generate_statement()
 
     return f
 
