@@ -34,7 +34,7 @@ class Plugin:
 
     @spec.hookimpl
     def configure(self, settings: Dynaconf):
-        pass
+        self._request_statement = DummyRequestStatement()
 
     @spec.hookimpl
     def schema(self):
@@ -44,9 +44,8 @@ class Plugin:
     @asynccontextmanager
     async def lifespan(self, context: Mapping):
         nextline = context['nextline']
-        request_statement = DummyRequestStatement(nextline=nextline)
         self._auto_mode = AutoMode(
-            nextline=nextline, request_statement=request_statement
+            nextline=nextline, request_statement=self._request_statement
         )
         async with self._auto_mode as y:
             yield y
