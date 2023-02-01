@@ -1,7 +1,8 @@
 import asyncio
-from typing import Any, Callable, Coroutine, Set
+from typing import Any, AsyncIterator, Callable, Coroutine, Set
 
 from nextline import Nextline
+from nextline.utils import pubsub
 
 from nextline_schedule.fsm import build_state_machine
 
@@ -15,7 +16,7 @@ class AutoMode:
 
     >>> auto_mode = AutoMode(nextline=nextline, request_statement=request_statement)
     >>> auto_mode.state
-    'off'
+    'created'
     '''
 
     def __init__(
@@ -26,9 +27,13 @@ class AutoMode:
         self._nextline = nextline
         self._request_statement = request_statement
         self._tasks: Set[asyncio.Task] = set()
+        self._pubsub_state = pubsub.PubSubItem[str]()
 
         machine = build_state_machine(self)
         machine.after_state_change = self.after_state_change.__name__  # type: ignore
+
+    def subscribe_state(self) -> AsyncIterator[str]:
+        return self._pubsub_state.subscribe()
 
     async def on_enter_waiting(self) -> None:
         async def wait() -> None:
@@ -86,6 +91,7 @@ class AutoMode:
 
     async def after_state_change(self) -> None:
         await self._collect_tasks()
+        await self._pubsub_state.publish(self.state)  # type: ignore
 
     async def _collect_tasks(self) -> None:
         if not self._tasks:
@@ -95,14 +101,12 @@ class AutoMode:
         )
         self._tasks -= done
 
-    async def start(self) -> None:
-        pass
-
     async def close(self) -> None:
         await self._collect_tasks()
+        await self._pubsub_state.close()
 
     async def __aenter__(self) -> 'AutoMode':
-        await self.start()
+        await self.start()  # type: ignore
         return self
 
     async def __aexit__(self, exc_type, exc_value, traceback) -> None:
