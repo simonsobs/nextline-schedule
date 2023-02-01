@@ -5,3 +5,6 @@
 
 [schedule]
 api = "https://scheduler-uobd.onrender.com"
+length_minutes = 1
+policy = "dummy"
+

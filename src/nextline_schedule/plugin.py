@@ -16,7 +16,11 @@ assert DEFAULT_CONFIG_PATH.is_file()
 
 PRELOAD = (str(DEFAULT_CONFIG_PATH),)
 SETTINGS = ()
-VALIDATORS = (Validator("SCHEDULE.API", must_exist=True, is_type_of=str),)
+VALIDATORS = (
+    Validator("SCHEDULE.API", must_exist=True, is_type_of=str),
+    Validator("SCHEDULE.LENGTH_MINUTES", must_exist=True, is_type_of=int),
+    Validator("SCHEDULE.POLICY", must_exist=True, is_type_of=str),
+)
 
 
 class Plugin:
