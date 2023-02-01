@@ -9,6 +9,12 @@ def build_state_machine(model=None, graph=False, asyncio=True, markup=False) -> 
     '''Finite state machine for the auto-pilot mode states.
 
     State Diagram:
+
+                 .-------------.
+                 |   Created   |
+                 '-------------'
+                        | start()
+                        v
                  .-------------.
             .--->|     Off     |<--------------.
             |    '-------------'               |
@@ -49,7 +55,10 @@ def build_state_machine(model=None, graph=False, asyncio=True, markup=False) -> 
 
     >>> model = Model()
     >>> machine = build_state_machine(model=model, asyncio=False)
-
+    >>> model.state
+    'created'
+    
+    >>> _ = model.start()
     >>> model.state
     'off'
 
@@ -98,18 +107,20 @@ def build_state_machine(model=None, graph=False, asyncio=True, markup=False) -> 
     state_conf = {
         'name': 'global',
         'states': [
+            'created',
             'off',
             'waiting',
             {'name': 'auto', 'children': auto_state, 'remap': {'raised': 'off'}},
         ],
         'transitions': [
+            ['start', 'created', 'off'],
             ['turn_on', 'off', 'waiting'],
             ['on_initialized', 'waiting', 'auto'],
             ['on_finished', 'waiting', 'auto'],
             ['turn_off', 'waiting', 'off'],
             ['turn_off', 'auto', 'off'],
         ],
-        'initial': 'off',
+        'initial': 'created',
         'queued': True,
         'ignore_invalid_triggers': True,
     }

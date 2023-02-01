@@ -20,6 +20,7 @@ def test_model_self_literal():
 
 async def test_transitions() -> None:
     machine = build_state_machine(model=Machine.self_literal)
+    await machine.start()
 
     # off -- turn_on --> waiting -- turn_off --> off
     assert machine.is_off()
@@ -65,6 +66,7 @@ async def test_transitions() -> None:
 
 async def test_ignore_invalid_triggers() -> None:
     machine = build_state_machine(model=Machine.self_literal)
+    await machine.start()
     assert machine.is_off()
     await machine.on_finished()  # invalid trigger
 
