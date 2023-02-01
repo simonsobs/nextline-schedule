@@ -3,17 +3,15 @@ from datetime import datetime, timedelta
 
 import httpx
 
-# https://github.com/simonsobs/so-scheduler/blob/master/readme.md#schedule-api
-API_URL = 'https://scheduler-uobd.onrender.com/api/v1/schedule/'
-
 
 class RequestStatement:
-    def __init__(self):
-        self._api_url = API_URL
-        self._length_minutes = 1
-        self._policy = 'dummy'
+    def __init__(self, api_url: str, length_minutes: int, policy: str):
+        self._api_url = api_url
+        self._length_minutes = length_minutes
+        self._policy = policy
 
     async def __call__(self) -> str:
+        # https://github.com/simonsobs/so-scheduler/blob/master/readme.md#schedule-api
         start_time = datetime.utcnow()
         duration = timedelta(minutes=self._length_minutes)
         end_time = start_time + duration
@@ -22,7 +20,7 @@ class RequestStatement:
         data = {"t0": start_time_str, "t1": end_time_str, "policy": self._policy}
         print(data)
         async with httpx.AsyncClient() as client:
-            response = await client.post(API_URL, json=data)
+            response = await client.post(self._api_url, json=data)
         print(response.json())
         return response.json()['commands']
 

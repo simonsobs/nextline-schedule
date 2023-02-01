@@ -4,10 +4,11 @@ from typing import Mapping, MutableMapping, Optional, Tuple
 from dynaconf import Dynaconf, Validator
 from nextlinegraphql.custom.decorator import asynccontextmanager
 from nextlinegraphql.hook import spec
+from rich import print
 
 from .auto import AutoMode
+from .scheduler import DummyRequestStatement, RequestStatement
 from .schema import Mutation, Query, Subscription
-from .scheduler import DummyRequestStatement
 
 HERE = Path(__file__).resolve().parent
 DEFAULT_CONFIG_PATH = HERE / 'default.toml'
@@ -38,7 +39,13 @@ class Plugin:
 
     @spec.hookimpl
     def configure(self, settings: Dynaconf):
-        self._request_statement = DummyRequestStatement()
+        api_rul = settings.schedule.api
+        length_minutes = settings.schedule.length_minutes
+        policy = settings.schedule.policy
+
+        self._request_statement = RequestStatement(
+            api_url=api_rul, length_minutes=length_minutes, policy=policy
+        )
 
     @spec.hookimpl
     def schema(self):
