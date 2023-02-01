@@ -7,7 +7,7 @@ from nextlinegraphql.hook import spec
 
 from .auto import AutoMode
 from .schema import Mutation, Query, Subscription
-from .scheduler import RequestStatement
+from .scheduler import DummyRequestStatement
 
 HERE = Path(__file__).resolve().parent
 DEFAULT_CONFIG_PATH = HERE / 'default.toml'
@@ -44,7 +44,7 @@ class Plugin:
     @asynccontextmanager
     async def lifespan(self, context: Mapping):
         nextline = context['nextline']
-        request_statement = RequestStatement(nextline=nextline)
+        request_statement = DummyRequestStatement(nextline=nextline)
         self._auto_mode = AutoMode(
             nextline=nextline, request_statement=request_statement
         )

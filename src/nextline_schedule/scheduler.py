@@ -2,7 +2,7 @@ from nextline import Nextline
 from .funcs import generate_statement
 
 
-class RequestStatement:
+class DummyRequestStatement:
     def __init__(self, nextline: Nextline):
         self._nextline = nextline
 
