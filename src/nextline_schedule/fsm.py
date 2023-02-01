@@ -57,7 +57,7 @@ def build_state_machine(model=None, graph=False, asyncio=True, markup=False) -> 
     >>> machine = build_state_machine(model=model, asyncio=False)
     >>> model.state
     'created'
-    
+
     >>> _ = model.start()
     >>> model.state
     'off'
