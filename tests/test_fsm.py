@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 import pytest
 from rich import print
 from transitions import Machine
@@ -81,7 +83,7 @@ async def test_ignore_invalid_triggers() -> None:
 def test_restore_from_markup():
     machine = build_state_machine(markup=True)
     assert isinstance(machine.markup, dict)
-    markup = dict(machine.markup)
+    markup = deepcopy(machine.markup)
     del markup['models']
     rebuild = HierarchicalMarkupMachine(model=None, **markup)
     assert rebuild.markup == machine.markup
