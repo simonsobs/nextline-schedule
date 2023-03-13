@@ -33,6 +33,7 @@ tests = [
   "pytest-cov>=3.0",
   "pytest-timeout>=2.1",
   "pytest>=7.0",
+  "rich>=13.3",
 ]
 
 
