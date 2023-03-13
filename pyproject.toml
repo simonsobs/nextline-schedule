@@ -92,5 +92,10 @@ exclude = '''(?x)(
 )'''
 
 [[tool.mypy.overrides]]
-module = ["dynaconf.*", "async_asgi_testclient.*", "snapshottest.*"]
+module = [
+  "dynaconf.*",
+  "async_asgi_testclient.*",
+  "snapshottest.*",
+  "apluggy.*",
+]
 ignore_missing_imports = true
