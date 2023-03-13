@@ -4,7 +4,6 @@ from typing import Mapping, MutableMapping, Optional, Tuple
 from apluggy import asynccontextmanager
 from dynaconf import Dynaconf, Validator
 from nextlinegraphql.hook import spec
-from rich import print
 
 from .auto import AutoMode
 from .scheduler import DummyRequestStatement, RequestStatement

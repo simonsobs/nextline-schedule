@@ -1,7 +1,6 @@
 from copy import deepcopy
 
 import pytest
-from rich import print
 from transitions import Machine
 from transitions.extensions.markup import HierarchicalMarkupMachine
 
