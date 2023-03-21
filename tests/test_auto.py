@@ -49,12 +49,12 @@ async def control(auto_mode: Any):
     assert auto_mode.state == 'off'
     await auto_mode.turn_on()
     nextline: Nextline = auto_mode._nextline
-    async for state in nextline.subscribe_run_info():
-        if state.run_no == 3 and state.state == 'running':
+    async for run_info in nextline.subscribe_run_info():
+        if run_info.run_no == 3 and run_info.state == 'running':
             break
     await auto_mode.turn_off()
-    async for state in nextline.subscribe_run_info():
-        if state.state == 'finished':
+    async for state in nextline.subscribe_state():
+        if state == 'finished':
             break
 
 
