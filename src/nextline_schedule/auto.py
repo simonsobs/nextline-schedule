@@ -61,7 +61,8 @@ class AutoMode:
     async def on_enter_auto_running(self) -> None:
         async def run() -> None:
             async def run_and_wait() -> None:
-                await self._nextline.run()
+                async with self._nextline.run_session():
+                    pass
                 if self._nextline.exception() is not None:
                     await self.on_raised()  # type: ignore
                 else:
