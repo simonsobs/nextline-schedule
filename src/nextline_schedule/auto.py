@@ -75,7 +75,7 @@ class AutoMode:
                     if not prompt_info.open:
                         continue
                     break
-                nextline.send_pdb_command(
+                await nextline.send_pdb_command(
                     command='continue',
                     prompt_no=prompt_info.prompt_no,
                     trace_no=prompt_info.trace_no,
