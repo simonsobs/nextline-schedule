@@ -60,32 +60,17 @@ class AutoMode:
 
     async def on_enter_auto_running(self) -> None:
         async def run() -> None:
-            async def run_and_wait() -> None:
-                async with self._nextline.run_session():
-                    pass
-                if self._nextline.exception() is not None:
-                    await self.on_raised()  # type: ignore
-                else:
-                    await self.on_finished()  # type: ignore
-
-            async def continue_on_prompt(nextline: Nextline) -> None:
-                async for prompt_info in nextline.subscribe_prompt_info():
-                    if prompt_info.trace_call_end:  # TODO: remove when unnecessary
-                        continue
-                    if not prompt_info.open:
-                        continue
-                    break
-                await nextline.send_pdb_command(
-                    command='continue',
-                    prompt_no=prompt_info.prompt_no,
-                    trace_no=prompt_info.trace_no,
-                )
-
-            await asyncio.gather(
-                run_and_wait(),
-                continue_on_prompt(self._nextline),
-                # monitor(),
-            )
+            async with self._nextline.run_session():
+                async for prompt in self._nextline.prompts():
+                    await self._nextline.send_pdb_command(
+                        command='continue',
+                        prompt_no=prompt.prompt_no,
+                        trace_no=prompt.trace_no,
+                    )
+            if self._nextline.exception() is not None:
+                await self.on_raised()  # type: ignore
+                return
+            await self.on_finished()  # type: ignore
 
         task = asyncio.create_task(run())
         self._tasks.add(task)
