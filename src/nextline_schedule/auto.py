@@ -5,6 +5,7 @@ from nextline import Nextline
 from nextline.utils import pubsub
 
 from nextline_schedule.fsm import build_state_machine
+from nextline_schedule.types import Statement
 
 
 class AutoMode:
@@ -22,7 +23,7 @@ class AutoMode:
     def __init__(
         self,
         nextline: Nextline,
-        request_statement: Callable[[], Coroutine[Any, Any, str]],
+        request_statement: Callable[[], Coroutine[Any, Any, Statement]],
     ):
         self._nextline = nextline
         self._request_statement = request_statement
