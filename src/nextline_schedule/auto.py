@@ -2,16 +2,16 @@ from typing import Any, Callable, Coroutine
 
 from nextline import Nextline
 
-from nextline_schedule.machine import AutoMode
+from nextline_schedule.machine import Machine
 from nextline_schedule.types import Statement
 
 
 def build_auto_mode(
     nextline: Nextline,
     request_statement: Callable[[], Coroutine[Any, Any, Statement]],
-) -> AutoMode:
+) -> Machine:
     callback = AutoModeCallback(nextline, request_statement)
-    auto_mode = AutoMode(callback=callback)
+    auto_mode = Machine(callback=callback)
     callback.auto_mode = auto_mode
     return auto_mode
 
@@ -25,7 +25,7 @@ class AutoModeCallback:
         self._nextline = nextline
         self._request_statement = request_statement
 
-        self.auto_mode: AutoMode  # to be set
+        self.auto_mode: Machine  # to be set
 
     async def wait(self) -> None:
         async for state in self._nextline.subscribe_state():

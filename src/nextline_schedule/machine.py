@@ -17,7 +17,7 @@ class CallbackType(Protocol):
         ...
 
 
-class AutoMode:
+class Machine:
     '''A model of the finite state machine.'''
 
     def __init__(self, callback: CallbackType):
@@ -59,7 +59,7 @@ class AutoMode:
         await self._collect_tasks()
         await self._pubsub_state.close()
 
-    async def __aenter__(self) -> 'AutoMode':
+    async def __aenter__(self) -> 'Machine':
         await self.start()  # type: ignore
         return self
 

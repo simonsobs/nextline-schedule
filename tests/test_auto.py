@@ -2,7 +2,7 @@ import asyncio
 
 from nextline import Nextline
 
-from nextline_schedule.auto import AutoMode, build_auto_mode
+from nextline_schedule.auto import Machine, build_auto_mode
 
 STATEMENT = '''
 """run_no: {run_no}"""
@@ -44,7 +44,7 @@ async def test_one() -> None:
     assert expected == await states
 
 
-async def control(auto_mode: AutoMode, nextline: Nextline):
+async def control(auto_mode: Machine, nextline: Nextline):
     assert auto_mode.state == 'off'
     await auto_mode.turn_on()
     async for run_info in nextline.subscribe_run_info():
@@ -53,5 +53,5 @@ async def control(auto_mode: AutoMode, nextline: Nextline):
     await auto_mode.turn_off()
 
 
-async def subscribe_state(auto_mode: AutoMode):
+async def subscribe_state(auto_mode: Machine):
     return [state async for state in auto_mode.subscribe_state()]
