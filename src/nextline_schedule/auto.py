@@ -10,13 +10,13 @@ def build_auto_mode(
     nextline: Nextline,
     request_statement: Callable[[], Coroutine[Any, Any, Statement]],
 ) -> Machine:
-    callback = AutoModeCallback(nextline, request_statement)
+    callback = Callback(nextline, request_statement)
     auto_mode = Machine(callback=callback)
     callback.auto_mode = auto_mode
     return auto_mode
 
 
-class AutoModeCallback:
+class Callback:
     def __init__(
         self,
         nextline: Nextline,
