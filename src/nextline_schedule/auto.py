@@ -6,7 +6,7 @@ from nextline_schedule.machine import Machine
 from nextline_schedule.types import Statement
 
 
-def build_auto_mode(
+def build_machine(
     nextline: Nextline,
     request_statement: Callable[[], Coroutine[Any, Any, Statement]],
 ) -> Machine:

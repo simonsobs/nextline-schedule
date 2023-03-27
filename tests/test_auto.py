@@ -2,7 +2,7 @@ import asyncio
 
 from nextline import Nextline
 
-from nextline_schedule.auto import Machine, build_auto_mode
+from nextline_schedule.auto import Machine, build_machine
 
 STATEMENT = '''
 """run_no: {run_no}"""
@@ -24,7 +24,7 @@ async def test_one() -> None:
     statement = STATEMENT.format(run_no=run_no)
     nextline = Nextline(statement=statement, run_no_start_from=run_no)
     request_statement = RequestStatement(nextline=nextline)
-    auto_mode = build_auto_mode(nextline=nextline, request_statement=request_statement)
+    auto_mode = build_machine(nextline=nextline, request_statement=request_statement)
 
     states = asyncio.create_task(subscribe_state(auto_mode))
 
