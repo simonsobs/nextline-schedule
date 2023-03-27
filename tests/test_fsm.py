@@ -1,7 +1,11 @@
 from copy import deepcopy
+from typing import Any, Dict, List, Tuple
+from unittest.mock import AsyncMock
 
 import pytest
-from transitions import Machine
+from hypothesis import given
+from hypothesis import strategies as st
+from transitions import Machine, MachineError
 from transitions.extensions.markup import HierarchicalMarkupMachine
 
 from nextline_schedule.fsm import build_state_machine
@@ -19,66 +23,6 @@ def test_model_self_literal():
     assert len(machine.models) == 1
 
 
-async def test_transitions() -> None:
-    machine = build_state_machine(model=Machine.self_literal)
-    await machine.start()
-
-    # off -- turn_on --> waiting -- turn_off --> off
-    assert machine.is_off()
-    await machine.turn_on()
-    assert machine.is_waiting()
-    await machine.turn_off()
-
-    # off -- turn_on --> waiting -- on_initialized --> auto_pulling -- turn_off --> off
-    assert machine.is_off()
-    await machine.turn_on()
-    await machine.on_initialized()
-    assert machine.is_auto_pulling()
-    await machine.turn_off()
-
-    # off -- turn_on --> waiting -- on_finished --> auto_pulling -- turn_off --> off
-    assert machine.is_off()
-    await machine.turn_on()
-    await machine.on_finished()
-    assert machine.is_auto_pulling()
-    await machine.turn_off()
-
-    # off -- turn_on --> waiting -- on_finished --> auto_pulling -- run --> auto_running -- turn_off --> off
-    assert machine.is_off()
-    await machine.turn_on()
-    await machine.on_finished()
-    await machine.run()
-    assert machine.is_auto_running()
-    await machine.turn_off()
-
-    # off -- turn_on --> waiting -- on_finished --> auto_pulling -- run --> auto_running -- on_raised --> off
-    assert machine.is_off()
-    await machine.turn_on()
-    await machine.on_finished()
-    await machine.run()
-    await machine.on_finished()
-    assert machine.is_auto_pulling()
-    await machine.run()
-    assert machine.is_auto_running()
-    await machine.on_raised()
-
-    assert machine.is_off()
-
-
-async def test_ignore_invalid_triggers() -> None:
-    machine = build_state_machine(model=Machine.self_literal)
-    await machine.start()
-    assert machine.is_off()
-    await machine.on_finished()  # invalid trigger
-
-    assert machine.is_off()
-    await machine.turn_on()
-    await machine.on_initialized()
-    assert machine.is_auto_pulling()
-    await machine.on_finished()  # invalid trigger
-    assert machine.is_auto_pulling()
-
-
 def test_restore_from_markup():
     machine = build_state_machine(markup=True)
     assert isinstance(machine.markup, dict)
@@ -92,3 +36,84 @@ def test_restore_from_markup():
 def test_graph():
     machine = build_state_machine(model=Machine.self_literal, graph=True)
     machine.get_graph().draw('states.png', prog='dot')
+
+
+@st.composite
+def st_paths(draw: st.DrawFn):
+    max_n_paths = draw(st.integers(min_value=1, max_value=30))
+
+    state_map = {
+        'created': {
+            'start': {'dest': 'off'},
+        },
+        'off': {
+            'turn_on': {'dest': 'waiting'},
+        },
+        'waiting': {
+            'turn_off': {'dest': 'off'},
+            'on_initialized': {'dest': 'auto_pulling'},
+            'on_finished': {'dest': 'auto_pulling'},
+        },
+        'auto_pulling': {
+            'turn_off': {'dest': 'off'},
+            'run': {'dest': 'auto_running'},
+        },
+        'auto_running': {
+            'turn_off': {'dest': 'off'},
+            'on_finished': {'dest': 'auto_pulling'},
+            'on_raised': {'dest': 'off'},
+        },
+    }
+
+    all_triggers = list({trigger for v in state_map.values() for trigger in v.keys()})
+
+    state_map_reduced = {
+        state: {trigger: v2 for trigger, v2 in v.items() if trigger != 'reset'}
+        for state, v in state_map.items()
+    }
+
+    paths: List[Tuple[str, Dict[str, Any]]] = []
+
+    state = 'created'
+    while len(paths) < max_n_paths:
+        trigger_map = state_map[state]
+        triggers = list(trigger_map.keys())
+        trigger = draw(st.sampled_from(all_triggers))
+        if trigger in trigger_map:
+            paths.append((trigger, trigger_map[trigger]))
+            state = trigger_map[trigger]['dest']
+        else:
+            paths.append((trigger, {'error': MachineError}))
+
+    while not state == 'off':
+        trigger_map = state_map_reduced[state]
+        triggers = list(trigger_map.keys())
+        trigger = draw(st.sampled_from(triggers))
+        paths.append((trigger, trigger_map[trigger]))
+        state = trigger_map[trigger]['dest']
+
+    return paths
+
+
+@given(paths=st_paths())
+async def test_transitions_hypothesis(paths: List[Tuple[str, Dict[str, Any]]]):
+
+    machine = build_state_machine(model=Machine.self_literal)
+    assert machine.is_created()
+
+    for method, map in paths:
+        if error := map.get('error'):
+            with pytest.raises(error):
+                await getattr(machine, method)()
+            continue
+
+        if before := map.get('before'):
+            setattr(machine, before, AsyncMock())
+
+        await getattr(machine, method)()
+        dest = map['dest']
+        assert getattr(machine, f'is_{dest}')()
+
+        if before:
+            assert getattr(machine, before).call_count == 1
+            assert getattr(machine, before).await_count == 1
