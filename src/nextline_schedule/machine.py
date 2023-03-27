@@ -18,14 +18,14 @@ class CallbackType(Protocol):
 
 
 class Machine:
-    '''A model of the finite state machine.'''
+    '''The finite state machine for auto mode.'''
 
     def __init__(self, callback: CallbackType):
         self._callback = callback
         self._tasks: Set[asyncio.Task] = set()
         self._pubsub_state = pubsub.PubSubItem[str]()
 
-        machine = build_state_machine(self)
+        machine = build_state_machine(model=self)
         machine.after_state_change = self.after_state_change.__name__  # type: ignore
 
     def subscribe_state(self) -> AsyncIterator[str]:
