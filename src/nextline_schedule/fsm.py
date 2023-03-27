@@ -95,7 +95,7 @@ def build_state_machine(model=None, graph=False, asyncio=True, markup=False) -> 
         ],
         'initial': 'pulling',
         'queued': True,
-        'ignore_invalid_triggers': True,
+        # 'ignore_invalid_triggers': True,
     }
 
     # Ideally, we would be able to pass the auto_state_conf dict directly to
@@ -122,7 +122,7 @@ def build_state_machine(model=None, graph=False, asyncio=True, markup=False) -> 
         ],
         'initial': 'created',
         'queued': True,
-        'ignore_invalid_triggers': True,
+        # 'ignore_invalid_triggers': True,
     }
 
     machine = MachineClass(model=model, **state_conf)  # type: ignore
