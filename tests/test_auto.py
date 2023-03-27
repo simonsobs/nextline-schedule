@@ -31,7 +31,7 @@ async def test_one() -> None:
 
     async with auto_mode:
         async with nextline:
-            await control(auto_mode)
+            await control(auto_mode, nextline)
 
     expected = [
         'off',
@@ -45,18 +45,14 @@ async def test_one() -> None:
     assert expected == await states
 
 
-async def control(auto_mode: Any):
+async def control(auto_mode: AutoMode, nextline: Nextline):
     assert auto_mode.state == 'off'
     await auto_mode.turn_on()
-    nextline: Nextline = auto_mode._nextline
     async for run_info in nextline.subscribe_run_info():
         if run_info.run_no == 3 and run_info.state == 'running':
             break
     await auto_mode.turn_off()
-    async for state in nextline.subscribe_state():
-        if state == 'finished':
-            break
 
 
-async def subscribe_state(auto_mode: Any):
+async def subscribe_state(auto_mode: AutoMode):
     return [state async for state in auto_mode.subscribe_state()]

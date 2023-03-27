@@ -8,6 +8,46 @@ from nextline_schedule.fsm import build_state_machine
 from nextline_schedule.types import Statement
 
 
+class Callback:
+    def __init__(
+        self,
+        auto_mode: 'AutoMode',
+        nextline: Nextline,
+        request_statement: Callable[[], Coroutine[Any, Any, Statement]],
+    ):
+        self._auto_mode = auto_mode
+        self._nextline = nextline
+        self._request_statement = request_statement
+
+    async def wait(self) -> None:
+        async for state in self._nextline.subscribe_state():
+            if state == 'initialized':
+                await self._auto_mode.on_initialized()  # type: ignore
+                break
+            if state == 'finished':
+                await self._auto_mode.on_finished()  # type: ignore
+                break
+        return
+
+    async def pull(self) -> None:
+        statement = await self._request_statement()
+        await self._nextline.reset(statement=statement)
+        await self._auto_mode.run()  # type: ignore
+
+    async def run(self) -> None:
+        async with self._nextline.run_session():
+            async for prompt in self._nextline.prompts():
+                await self._nextline.send_pdb_command(
+                    command='continue',
+                    prompt_no=prompt.prompt_no,
+                    trace_no=prompt.trace_no,
+                )
+        if self._nextline.exception() is not None:
+            await self._auto_mode.on_raised()  # type: ignore
+            return
+        await self._auto_mode.on_finished()  # type: ignore
+
+
 class AutoMode:
     '''A model of the finite state machine.
 
@@ -25,8 +65,7 @@ class AutoMode:
         nextline: Nextline,
         request_statement: Callable[[], Coroutine[Any, Any, Statement]],
     ):
-        self._nextline = nextline
-        self._request_statement = request_statement
+        self._callback = Callback(self, nextline, request_statement)
         self._tasks: Set[asyncio.Task] = set()
         self._pubsub_state = pubsub.PubSubItem[str]()
 
@@ -37,43 +76,15 @@ class AutoMode:
         return self._pubsub_state.subscribe()
 
     async def on_enter_waiting(self) -> None:
-        async def wait() -> None:
-            async for state in self._nextline.subscribe_state():
-                if state == 'initialized':
-                    await self.on_initialized()  # type: ignore
-                    break
-                if state == 'finished':
-                    await self.on_finished()  # type: ignore
-                    break
-            return
-
-        task = asyncio.create_task(wait())
+        task = asyncio.create_task(self._callback.wait())
         self._tasks.add(task)
 
     async def on_enter_auto_pulling(self) -> None:
-        async def pull() -> None:
-            statement = await self._request_statement()
-            await self._nextline.reset(statement=statement)
-            await self.run()  # type: ignore
-
-        task = asyncio.create_task(pull())
+        task = asyncio.create_task(self._callback.pull())
         self._tasks.add(task)
 
     async def on_enter_auto_running(self) -> None:
-        async def run() -> None:
-            async with self._nextline.run_session():
-                async for prompt in self._nextline.prompts():
-                    await self._nextline.send_pdb_command(
-                        command='continue',
-                        prompt_no=prompt.prompt_no,
-                        trace_no=prompt.trace_no,
-                    )
-            if self._nextline.exception() is not None:
-                await self.on_raised()  # type: ignore
-                return
-            await self.on_finished()  # type: ignore
-
-        task = asyncio.create_task(run())
+        task = asyncio.create_task(self._callback.run())
         self._tasks.add(task)
 
     async def after_state_change(self) -> None:
