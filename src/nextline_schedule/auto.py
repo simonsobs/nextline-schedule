@@ -10,10 +10,10 @@ def build_machine(
     nextline: Nextline,
     request_statement: Callable[[], Coroutine[Any, Any, Statement]],
 ) -> Machine:
-    callback = Callback(nextline, request_statement)
-    auto_mode = Machine(callback=callback)
-    callback.auto_mode = auto_mode
-    return auto_mode
+    callback = Callback(nextline=nextline, request_statement=request_statement)
+    machine = Machine(callback=callback)
+    callback.auto_mode = machine
+    return machine
 
 
 class Callback:
