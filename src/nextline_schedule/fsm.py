@@ -10,37 +10,38 @@ def build_state_machine(model=None, graph=False, asyncio=True, markup=False) -> 
 
     State Diagram:
 
-                 .-------------.
-                 |   Created   |
-                 '-------------'
-                        | start()
-                        v
-                 .-------------.
-            .--->|     Off     |<--------------.
-            |    '-------------'               |
-            |           | turn_on()            |
-         turn_off()     |                      |
-            |           v                      |
-            |    .-------------.               |
-            |----|   Waiting   |               |
-            |    '-------------'          on_raised()
-            |           |                      |
-            |           | on_initialized()     |
-            |           | on_finished()        |
-        .---------------+------------------.   |
-        |   Auto        |                  |   |
-        |               v                  |   |
-        |        .-------------.           |   |
-        |        |   Pulling   |<--.       |   |
-        |        '-------------'   |       |   |
-        |         run() |          |       |   |
-        |               |    on_finished() |   |
-        |               v          |       |   |
-        |        .-------------.   |       |   |
-        |        |   Running   |-----------+---'
-        |        '-------------'           |
-        |                                  |
-        '----------------------------------'
+                         .-------------.
+                         |   Created   |
+                         '-------------'
+                                | start()
+                                |
+                                v
+                         .-------------.
+         .-------------->|     Off     |<--------------.
+         |               '-------------'               |
+         |                      | turn_on()            |
+       turn_off()               |                      |
+         |                      v                      |
+         |               .-------------.               |
+         |---------------|   Waiting   |          on_raised()
+         |               '-------------'               |
+         |                      | on_initialized()     |
+         |                      | on_finished()        |
+         |                      |                      |
+         |   .------------------+------------------.   |
+         |   |   Auto           |                  |   |
+         |   |                  v                  |   |
+         |   |           .-------------.           |   |
+         |   |           |   Pulling   |           |   |
+         '---|           '-------------'           |---'
+             |         run() |     ^               |
+             |               |     |               |
+             |               v     | on_finished() |
+             |           .-------------.           |
+             |           |   Running   |           |
+             |           '-------------'           |
+             |                                     |
+             '-------------------------------------'
 
     >>> class Model:
     ...     def on_enter_waiting(self):
@@ -87,11 +88,10 @@ def build_state_machine(model=None, graph=False, asyncio=True, markup=False) -> 
 
     auto_state_conf = {
         'name': 'auto',
-        'states': ['pulling', 'running', 'raised'],
+        'states': ['pulling', 'running'],
         'transitions': [
             ['run', 'pulling', 'running'],
             ['on_finished', 'running', 'pulling'],
-            ['on_raised', 'running', 'raised'],
         ],
         'initial': 'pulling',
         'queued': True,
@@ -110,13 +110,14 @@ def build_state_machine(model=None, graph=False, asyncio=True, markup=False) -> 
             'created',
             'off',
             'waiting',
-            {'name': 'auto', 'children': auto_state, 'remap': {'raised': 'off'}},
+            {'name': 'auto', 'children': auto_state},
         ],
         'transitions': [
             ['start', 'created', 'off'],
             ['turn_on', 'off', 'waiting'],
             ['on_initialized', 'waiting', 'auto'],
             ['on_finished', 'waiting', 'auto'],
+            ['on_raised', 'auto', 'off'],
             ['turn_off', 'auto', 'off'],
             {
                 'trigger': 'turn_off',

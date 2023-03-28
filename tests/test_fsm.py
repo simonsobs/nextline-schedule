@@ -55,12 +55,13 @@ def st_paths(draw: st.DrawFn):
             'on_finished': {'dest': 'auto_pulling'},
         },
         'auto_pulling': {
-            'turn_off': {'dest': 'off'},
             'run': {'dest': 'auto_running'},
+            'turn_off': {'dest': 'off'},
+            'on_raised': {'dest': 'off'},
         },
         'auto_running': {
-            'turn_off': {'dest': 'off'},
             'on_finished': {'dest': 'auto_pulling'},
+            'turn_off': {'dest': 'off'},
             'on_raised': {'dest': 'off'},
         },
     }
