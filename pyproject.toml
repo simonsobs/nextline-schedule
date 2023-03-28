@@ -66,6 +66,8 @@ addopts = "--doctest-modules"
 # doctest_optionflags = ["ELLIPSIS", "NORMALIZE_WHITESPACE",]
 doctest_optionflags = ["ELLIPSIS"]
 norecursedirs = "build"
+log_cli = false
+log_cli_level = "INFO"
 
 [tool.black]
 skip-string-normalization = true
