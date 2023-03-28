@@ -1,4 +1,5 @@
 import asyncio
+from logging import getLogger
 from typing import AsyncIterator, Protocol, Set
 
 from nextline.utils import pubsub
@@ -24,7 +25,7 @@ class Machine:
         self._callback = callback
         self._tasks: Set[asyncio.Task] = set()
         self._pubsub_state = pubsub.PubSubItem[str]()
-
+        self._logger = getLogger(__name__)
         machine = build_state_machine(model=self)
         machine.after_state_change = self.after_state_change.__name__  # type: ignore
 
@@ -51,8 +52,13 @@ class Machine:
         if not self._tasks:
             return
         done, _ = await asyncio.wait(
-            self._tasks, timeout=0, return_when=asyncio.FIRST_COMPLETED
+            self._tasks,
+            timeout=0,
+            return_when=asyncio.FIRST_COMPLETED,
         )
+        for task in done:
+            if (exc := task.exception()) is not None:
+                self._logger.warning('An exception raised in a task', exc_info=exc)
         self._tasks -= done
 
     async def close(self) -> None:
