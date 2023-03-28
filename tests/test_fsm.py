@@ -64,11 +64,13 @@ def st_paths(draw: st.DrawFn):
             'on_raised': {'dest': 'off'},
         },
     }
+    final_states = {'off'}
+    backwards = {'on_initialized', 'on_finished'}
 
     all_triggers = list({trigger for v in state_map.values() for trigger in v.keys()})
 
     state_map_reduced = {
-        state: {trigger: v2 for trigger, v2 in v.items() if trigger != 'reset'}
+        state: {trigger: v2 for trigger, v2 in v.items() if trigger not in backwards}
         for state, v in state_map.items()
     }
 
@@ -77,7 +79,6 @@ def st_paths(draw: st.DrawFn):
     state = 'created'
     while len(paths) < max_n_paths:
         trigger_map = state_map[state]
-        triggers = list(trigger_map.keys())
         trigger = draw(st.sampled_from(all_triggers))
         if trigger in trigger_map:
             paths.append((trigger, trigger_map[trigger]))
@@ -85,7 +86,7 @@ def st_paths(draw: st.DrawFn):
         else:
             paths.append((trigger, {'error': MachineError}))
 
-    while not state == 'off':
+    while state not in final_states:
         trigger_map = state_map_reduced[state]
         triggers = list(trigger_map.keys())
         trigger = draw(st.sampled_from(triggers))
