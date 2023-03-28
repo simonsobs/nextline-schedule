@@ -1,3 +1,4 @@
+from logging import getLogger
 from typing import Any, Callable, Coroutine
 
 from nextline import Nextline
@@ -25,6 +26,8 @@ class Callback:
         self._nextline = nextline
         self._request_statement = request_statement
 
+        self._logger = getLogger(__name__)
+
         self.auto_mode: Machine  # to be set
 
     async def wait(self) -> None:
@@ -44,7 +47,12 @@ class Callback:
         self._canceled = True
 
     async def pull(self) -> None:
-        statement = await self._request_statement()
+        try:
+            statement = await self._request_statement()
+        except Exception:
+            self._logger.exception('')
+            await self.auto_mode.on_raised()  # type: ignore
+            return
         await self._nextline.reset(statement=statement)
         await self.auto_mode.run()  # type: ignore
 
