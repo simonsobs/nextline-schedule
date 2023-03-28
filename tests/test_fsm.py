@@ -50,7 +50,7 @@ def st_paths(draw: st.DrawFn):
             'turn_on': {'dest': 'waiting'},
         },
         'waiting': {
-            'turn_off': {'dest': 'off'},
+            'turn_off': {'dest': 'off', 'before': 'cancel_waiting'},
             'on_initialized': {'dest': 'auto_pulling'},
             'on_finished': {'dest': 'auto_pulling'},
         },

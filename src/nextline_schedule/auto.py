@@ -28,7 +28,10 @@ class Callback:
         self.auto_mode: Machine  # to be set
 
     async def wait(self) -> None:
+        self._canceled = False
         async for state in self._nextline.subscribe_state():
+            if self._canceled:
+                break
             if state == 'initialized':
                 await self.auto_mode.on_initialized()  # type: ignore
                 break
@@ -36,6 +39,9 @@ class Callback:
                 await self.auto_mode.on_finished()  # type: ignore
                 break
         return
+
+    async def cancel_waiting(self) -> None:
+        self._canceled = True
 
     async def pull(self) -> None:
         statement = await self._request_statement()
