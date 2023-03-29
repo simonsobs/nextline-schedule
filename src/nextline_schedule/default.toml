@@ -7,3 +7,8 @@
 api = "https://scheduler-uobd.onrender.com/api/v1/schedule/"
 length_minutes = 1
 policy = "dummy"
+
+[logging]
+dynaconf_merge = { loggers = { nextline_schedule = { handlers = [
+	"default",
+], level = "DEBUG" } } }
