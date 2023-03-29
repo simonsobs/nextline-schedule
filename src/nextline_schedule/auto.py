@@ -1,3 +1,4 @@
+import asyncio
 from logging import getLogger
 from typing import Any, Callable, Coroutine
 
@@ -31,20 +32,17 @@ class Callback:
         self.auto_mode: Machine  # to be set
 
     async def wait(self) -> None:
-        self._canceled = False
-        async for state in self._nextline.subscribe_state():
-            if self._canceled:
-                break
-            if state == 'initialized':
-                await self.auto_mode.on_initialized()  # type: ignore
-                break
-            if state == 'finished':
-                await self.auto_mode.on_finished()  # type: ignore
-                break
+        try:
+            async for state in self._nextline.subscribe_state():
+                if state == 'initialized':
+                    await self.auto_mode.on_initialized()  # type: ignore
+                    break
+                if state == 'finished':
+                    await self.auto_mode.on_finished()  # type: ignore
+                    break
+        except asyncio.CancelledError:
+            self._logger.info(f'{self.__class__.__name__}.wait() cancelled')
         return
-
-    async def cancel_waiting(self) -> None:
-        self._canceled = True
 
     async def pull(self) -> None:
         try:

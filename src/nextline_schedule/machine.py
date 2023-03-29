@@ -11,9 +11,6 @@ class CallbackType(Protocol):
     async def wait(self) -> None:
         ...
 
-    async def cancel_waiting(self) -> None:
-        ...
-
     async def pull(self) -> None:
         ...
 
@@ -37,10 +34,11 @@ class Machine:
 
     async def on_enter_waiting(self) -> None:
         task = asyncio.create_task(self._callback.wait())
+        self._task_wait = task
         self._tasks.add(task)
 
     async def cancel_waiting(self) -> None:
-        await self._callback.cancel_waiting()
+        self._task_wait.cancel()
 
     async def on_enter_auto_pulling(self) -> None:
         task = asyncio.create_task(self._callback.pull())
