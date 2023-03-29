@@ -1,5 +1,6 @@
 import random
 from datetime import datetime, timedelta
+from logging import getLogger
 
 import httpx
 
@@ -9,6 +10,7 @@ class RequestStatement:
         self._api_url = api_url
         self._length_minutes = length_minutes
         self._policy = policy
+        self._logger = getLogger(__name__)
 
     async def __call__(self) -> str:
         # https://github.com/simonsobs/so-scheduler/blob/master/readme.md#schedule-api
@@ -18,10 +20,10 @@ class RequestStatement:
         start_time_str = start_time.strftime('%Y-%m-%d %H:%M')
         end_time_str = end_time.strftime('%Y-%m-%d %H:%M')
         data = {"t0": start_time_str, "t1": end_time_str, "policy": self._policy}
-        print(data)
+        self._logger.info(f'Pulling a script: {data!r}')
         async with httpx.AsyncClient() as client:
             response = await client.post(self._api_url, json=data)
-        print(response.json())
+        self._logger.info(f'Response: {response.json()!r}')
         return response.json()['commands']
 
 
