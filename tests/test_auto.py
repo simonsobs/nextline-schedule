@@ -45,12 +45,12 @@ async def test_one() -> None:
 
 
 async def control(auto_mode: Machine, nextline: Nextline):
-    assert auto_mode.state == 'off'
-    await auto_mode.turn_on()
+    assert auto_mode.state == 'off'  # type: ignore
+    await auto_mode.turn_on()  # type: ignore
     async for run_info in nextline.subscribe_run_info():
         if run_info.run_no == 3 and run_info.state == 'running':
             break
-    await auto_mode.turn_off()
+    await auto_mode.turn_off()  # type: ignore
 
 
 async def subscribe_state(auto_mode: Machine):
