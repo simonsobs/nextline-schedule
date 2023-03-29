@@ -6,10 +6,11 @@ import httpx
 
 
 class RequestStatement:
-    def __init__(self, api_url: str, length_minutes: int, policy: str):
+    def __init__(self, api_url: str, length_minutes: int, policy: str, timeout=5.0):
         self._api_url = api_url
         self._length_minutes = length_minutes
         self._policy = policy
+        self._timeout = timeout
         self._logger = getLogger(__name__)
 
     async def __call__(self) -> str:
@@ -21,8 +22,17 @@ class RequestStatement:
         end_time_str = end_time.strftime('%Y-%m-%d %H:%M')
         data = {"t0": start_time_str, "t1": end_time_str, "policy": self._policy}
         self._logger.info(f'Pulling a script: {data!r}')
-        async with httpx.AsyncClient() as client:
-            response = await client.post(self._api_url, json=data)
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.post(
+                    self._api_url, json=data, timeout=self._timeout
+                )
+        except Exception:
+            self._logger.exception('')
+            raise
+        if not response.status_code == 200:
+            self._logger.error(f'Failed to pull a script: {response!r}')
+            raise RuntimeError(f'Failed to pull a script: {response!r}')
         self._logger.info(f'Response: {response.json()!r}')
         return response.json()['commands']
 
