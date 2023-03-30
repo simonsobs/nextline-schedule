@@ -3,5 +3,5 @@ __all__ = [
     'AutoModeStateMachine',
 ]
 
-from .auto import build_auto_mode_state_machine
+from .callback import build_auto_mode_state_machine
 from .machine import AutoModeStateMachine
