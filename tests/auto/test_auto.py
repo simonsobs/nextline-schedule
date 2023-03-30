@@ -2,7 +2,7 @@ import asyncio
 
 from nextline import Nextline
 
-from nextline_schedule.fsm import Machine, build_machine
+from nextline_schedule.auto import Machine, build_machine
 
 STATEMENT = '''
 """run_no: {run_no}"""

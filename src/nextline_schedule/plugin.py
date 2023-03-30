@@ -5,7 +5,7 @@ from apluggy import asynccontextmanager
 from dynaconf import Dynaconf, Validator
 from nextlinegraphql.hook import spec
 
-from .fsm import build_machine
+from .auto import build_machine
 from .scheduler import DummyRequestStatement, RequestStatement
 from .schema import Mutation, Query, Subscription
 
