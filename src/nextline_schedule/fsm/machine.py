@@ -4,7 +4,7 @@ from typing import AsyncIterator, Protocol, Set
 
 from nextline.utils import pubsub
 
-from nextline_schedule.fsm import build_state_machine
+from .factory import build_state_machine
 
 
 class CallbackType(Protocol):

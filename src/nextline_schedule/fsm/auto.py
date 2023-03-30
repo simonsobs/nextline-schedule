@@ -4,8 +4,9 @@ from typing import Any, Callable, Coroutine
 
 from nextline import Nextline
 
-from nextline_schedule.machine import Machine
 from nextline_schedule.types import Statement
+
+from .machine import Machine
 
 
 def build_machine(
