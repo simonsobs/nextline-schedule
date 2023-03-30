@@ -6,15 +6,15 @@ from nextline import Nextline
 
 from nextline_schedule.types import Statement
 
-from .machine import Machine
+from .machine import AutoModeStateMachine
 
 
-def build_machine(
+def build_auto_mode_state_machine(
     nextline: Nextline,
     request_statement: Callable[[], Coroutine[Any, Any, Statement]],
-) -> Machine:
+) -> AutoModeStateMachine:
     callback = Callback(nextline=nextline, request_statement=request_statement)
-    machine = Machine(callback=callback)
+    machine = AutoModeStateMachine(callback=callback)
     callback.auto_mode = machine
     return machine
 
@@ -30,7 +30,7 @@ class Callback:
 
         self._logger = getLogger(__name__)
 
-        self.auto_mode: Machine  # to be set
+        self.auto_mode: AutoModeStateMachine  # to be set
 
     async def wait(self) -> None:
         try:

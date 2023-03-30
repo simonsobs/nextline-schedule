@@ -5,7 +5,7 @@ from apluggy import asynccontextmanager
 from dynaconf import Dynaconf, Validator
 from nextlinegraphql.hook import spec
 
-from .auto import build_machine
+from .auto import build_auto_mode_state_machine
 from .scheduler import DummyRequestStatement, RequestStatement
 from .schema import Mutation, Query, Subscription
 
@@ -54,7 +54,7 @@ class Plugin:
     @asynccontextmanager
     async def lifespan(self, context: Mapping):
         nextline = context['nextline']
-        self._auto_mode = build_machine(
+        self._auto_mode = build_auto_mode_state_machine(
             nextline=nextline, request_statement=self._request_statement
         )
         async with self._auto_mode as y:
