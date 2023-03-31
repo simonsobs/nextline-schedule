@@ -42,7 +42,7 @@ Documentation = "https://github.com/simonsobs/nextline-schedule#readme"
 Issues = "https://github.com/simonsobs/nextline-schedule/issues"
 Source = "https://github.com/simonsobs/nextline-schedule"
 
-[project.entry-points."nextline"]
+[project.entry-points."nextline_graphql"]
 schedule = "nextline_schedule:Plugin"
 
 [tool.hatch.version]
