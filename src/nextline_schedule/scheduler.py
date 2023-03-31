@@ -31,8 +31,9 @@ class RequestStatement:
             self._logger.exception('')
             raise
         if not response.status_code == 200:
-            self._logger.error(f'Failed to pull a script: {response!r}')
-            raise RuntimeError(f'Failed to pull a script: {response!r}')
+            msg = f'Failed: {response.status_code!r}, {response.text!r}'
+            self._logger.error(msg)
+            raise RuntimeError(msg)
         self._logger.info(f'Response: {response.json()!r}')
         return response.json()['commands']
 
