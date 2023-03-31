@@ -3,9 +3,8 @@ from typing import AsyncIterator
 
 import pytest
 from async_asgi_testclient import TestClient
-from starlette.applications import Starlette
-
 from nextlinegraphql import create_app
+from starlette.applications import Starlette
 
 
 @pytest.fixture
