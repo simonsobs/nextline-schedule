@@ -14,7 +14,7 @@ class CallbackType(Protocol):
     async def pull(self) -> None:
         ...
 
-    async def run(self) -> None:
+    async def run(self, started: asyncio.Event) -> None:
         ...
 
 
@@ -34,23 +34,27 @@ class AutoModeStateMachine:
 
     async def on_enter_waiting(self) -> None:
         task = asyncio.create_task(self._callback.wait())
-        self._task_wait = task
+        self._task = task
         self._tasks.add(task)
-
-    async def cancel_waiting(self) -> None:
-        self._task_wait.cancel()
 
     async def on_enter_auto_pulling(self) -> None:
         task = asyncio.create_task(self._callback.pull())
+        self._task = task
         self._tasks.add(task)
 
     async def on_enter_auto_running(self) -> None:
-        task = asyncio.create_task(self._callback.run())
+        started = asyncio.Event()
+        task = asyncio.create_task(self._callback.run(started=started))
+        await started.wait()
+        self._task = task
         self._tasks.add(task)
 
     async def after_state_change(self) -> None:
         await self._collect_tasks()
         await self._pubsub_state.publish(self.state)  # type: ignore
+
+    async def cancel_task(self) -> None:
+        self._task.cancel()
 
     async def _collect_tasks(self) -> None:
         if not self._tasks:

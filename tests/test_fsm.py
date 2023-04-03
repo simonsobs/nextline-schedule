@@ -14,7 +14,6 @@ from nextline_schedule.auto.factory import build_state_machine
 def test_model_default():
     machine = build_state_machine()
     assert not machine.models
-    print(machine.models)
 
 
 def test_model_self_literal():
@@ -50,18 +49,18 @@ def st_paths(draw: st.DrawFn):
             'turn_on': {'dest': 'waiting'},
         },
         'waiting': {
-            'turn_off': {'dest': 'off', 'before': 'cancel_waiting'},
+            'turn_off': {'dest': 'off', 'before': 'cancel_task'},
             'on_initialized': {'dest': 'auto_pulling'},
             'on_finished': {'dest': 'auto_pulling'},
         },
         'auto_pulling': {
             'run': {'dest': 'auto_running'},
-            'turn_off': {'dest': 'off'},
+            'turn_off': {'dest': 'off', 'before': 'cancel_task'},
             'on_raised': {'dest': 'off'},
         },
         'auto_running': {
             'on_finished': {'dest': 'auto_pulling'},
-            'turn_off': {'dest': 'off'},
+            'turn_off': {'dest': 'off', 'before': 'cancel_task'},
             'on_raised': {'dest': 'off'},
         },
     }
