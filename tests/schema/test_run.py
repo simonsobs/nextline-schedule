@@ -1,3 +1,5 @@
+import asyncio
+
 import pytest
 from async_asgi_testclient import TestClient
 from nextlinegraphql.plugins.ctrl.graphql import SUBSCRIBE_STATE
@@ -9,10 +11,14 @@ from nextline_schedule.graphql import (
     MUTATE_AUTO_MODE_TURN_ON,
     QUERY_AUTO_MODE,
     QUERY_SCHEDULER,
+    SUBSCRIBE_AUTO_MODE_STATE,
 )
 
 
 async def test_run(client: TestClient):
+
+    turned_on = asyncio.Event()
+    task = asyncio.create_task(subscribe_auto_mode_state(client, turned_on))
 
     data = await gql_request(client, QUERY_SCHEDULER)
     expected = {
@@ -35,6 +41,7 @@ async def test_run(client: TestClient):
     n_runs = 0
     async for data in gql_subscribe(client, SUBSCRIBE_STATE):
         if data['state'] == 'running':
+            turned_on.set()
             n_runs += 1
         if n_runs >= 3:
             data = await gql_request(client, MUTATE_AUTO_MODE_TURN_OFF)
@@ -43,6 +50,19 @@ async def test_run(client: TestClient):
     async for data in gql_subscribe(client, SUBSCRIBE_STATE):
         if data['state'] == 'finished':
             break
+
+    await task
+
+
+async def subscribe_auto_mode_state(client: TestClient, turned_on: asyncio.Event):
+    await turned_on.wait()
+    ret = []
+    async for data in gql_subscribe(client, SUBSCRIBE_AUTO_MODE_STATE):
+        state = data['scheduleAutoModeState']
+        ret.append(state)
+        if state == 'off':
+            break
+    return ret
 
 
 @pytest.fixture(autouse=True)
