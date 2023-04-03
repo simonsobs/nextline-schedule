@@ -24,6 +24,14 @@ An interface to the [SO scheduler](https://github.com/simonsobs/so-scheduler).
 pip install nextline-schedule
 ```
 
+## Configuration
+
+| Environment variable                | Default value                                          | Description                                                                                          |
+| ----------------------------------- | ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
+| `NEXTLINE_SCHEDULE__API`            | `https://scheduler-uobd.onrender.com/api/v1/schedule/` | The [schedule API URL](https://github.com/simonsobs/so-scheduler/blob/master/readme.md#schedule-api) |
+| `NEXTLINE_SCHEDULE__LENGTH_MINUTES` | 1                                                      |                                                                                                      |
+| `NEXTLINE_SCHEDULE__POLICY`         | `dummy`                                                |                                                                                                      |
+
 ## License
 
 - _Nextline Schedule_ is licensed under the [MIT](https://spdx.org/licenses/MIT.html) license.
