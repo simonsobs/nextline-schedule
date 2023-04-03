@@ -1,0 +1,9 @@
+query Scheduler {
+  schedule {
+    scheduler {
+      apiUrl
+      lengthMinutes
+      policy
+    }
+  }
+}
