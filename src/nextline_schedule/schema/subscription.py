@@ -6,9 +6,7 @@ from strawberry.types import Info
 
 def subscribe_auto_mode_state(info: Info) -> AsyncIterator[str]:
     auto_mode = info.context['auto_mode']
-    print(auto_mode)
     r = auto_mode.subscribe_state()
-    print(r)
     return r
 
 
