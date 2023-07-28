@@ -68,6 +68,7 @@ class Callback:
                         trace_no=prompt.trace_no,
                     )
                     started.set()
+                started.set()  # ensure started is set even if no prompt is received
             if self._nextline.exception() is not None:
                 await self.auto_mode.on_raised()  # type: ignore
                 return
