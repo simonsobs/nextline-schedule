@@ -1,7 +1,10 @@
 from typing import Optional
 
 import strawberry
+from nextline import Nextline
 from strawberry.types import Info
+
+from nextline_schedule.scheduler import RequestStatement
 
 
 async def mutate_turn_on(info: Info) -> bool:
@@ -43,6 +46,14 @@ class MutationScheduler:
         return True
 
 
+async def mutate_load_script(info: Info) -> bool:
+    nextline: Nextline = info.context["nextline"]
+    scheduler: RequestStatement = info.context["scheduler"]
+    statement = await scheduler()
+    await nextline.reset(statement=statement)
+    return True
+
+
 @strawberry.type
 class MutationSchedule:
     @strawberry.field
@@ -52,6 +63,10 @@ class MutationSchedule:
     @strawberry.field
     def scheduler(self, info: Info) -> MutationScheduler:
         return MutationScheduler()
+
+    @strawberry.mutation
+    async def load_script(self, info: Info) -> bool:
+        return await mutate_load_script(info)
 
 
 @strawberry.type
