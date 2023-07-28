@@ -60,15 +60,7 @@ class Callback:
 
     async def run(self, started: asyncio.Event) -> None:
         try:
-            async with self._nextline.run_session():
-                async for prompt in self._nextline.prompts():
-                    await self._nextline.send_pdb_command(
-                        command='continue',
-                        prompt_no=prompt.prompt_no,
-                        trace_no=prompt.trace_no,
-                    )
-                    started.set()
-                started.set()  # ensure started is set even if no prompt is received
+            await self._nextline.run_continue_and_wait(started)
             if self._nextline.exception() is not None:
                 await self.auto_mode.on_raised()  # type: ignore
                 return
