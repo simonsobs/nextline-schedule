@@ -1,5 +1,5 @@
 from copy import deepcopy
-from typing import Any, Dict, List, Tuple
+from typing import Any
 from unittest.mock import AsyncMock
 
 import pytest
@@ -74,7 +74,7 @@ def st_paths(draw: st.DrawFn):
         for state, v in state_map.items()
     }
 
-    paths: List[Tuple[str, Dict[str, Any]]] = []
+    paths: list[tuple[str, dict[str, Any]]] = []
 
     state = 'created'
     while len(paths) < max_n_paths:
@@ -97,8 +97,7 @@ def st_paths(draw: st.DrawFn):
 
 
 @given(paths=st_paths())
-async def test_transitions_hypothesis(paths: List[Tuple[str, Dict[str, Any]]]):
-
+async def test_transitions_hypothesis(paths: list[tuple[str, dict[str, Any]]]):
     machine = build_state_machine(model=Machine.self_literal)
     assert machine.is_created()
 

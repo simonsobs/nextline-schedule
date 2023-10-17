@@ -1,6 +1,6 @@
 import asyncio
 from logging import getLogger
-from typing import AsyncIterator, Protocol, Set
+from typing import AsyncIterator, Protocol
 
 from nextline.utils import pubsub
 
@@ -23,7 +23,7 @@ class AutoModeStateMachine:
 
     def __init__(self, callback: CallbackType):
         self._callback = callback
-        self._tasks: Set[asyncio.Task] = set()
+        self._tasks = set[asyncio.Task]()
         self._pubsub_state = pubsub.PubSubItem[str]()
         self._logger = getLogger(__name__)
         machine = build_state_machine(model=self)

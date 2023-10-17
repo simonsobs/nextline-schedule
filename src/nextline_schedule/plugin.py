@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Mapping, MutableMapping, Optional, Tuple
+from typing import Mapping, MutableMapping, Optional
 
 from apluggy import asynccontextmanager
 from dynaconf import Dynaconf, Validator
@@ -25,15 +25,15 @@ VALIDATORS = (
 
 class Plugin:
     @spec.hookimpl
-    def dynaconf_preload(self) -> Optional[Tuple[str, ...]]:
+    def dynaconf_preload(self) -> Optional[tuple[str, ...]]:
         return PRELOAD
 
     @spec.hookimpl
-    def dynaconf_settings_files(self) -> Optional[Tuple[str, ...]]:
+    def dynaconf_settings_files(self) -> Optional[tuple[str, ...]]:
         return SETTINGS
 
     @spec.hookimpl
-    def dynaconf_validators(self) -> Optional[Tuple[Validator, ...]]:
+    def dynaconf_validators(self) -> Optional[tuple[Validator, ...]]:
         return VALIDATORS
 
     @spec.hookimpl
