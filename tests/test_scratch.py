@@ -1,6 +1,7 @@
 import asyncio
 import sys
-from typing import AsyncIterable, AsyncIterator, Iterable, TypeVar
+from collections.abc import AsyncIterable, AsyncIterator, Iterable
+from typing import TypeVar
 
 import pytest
 

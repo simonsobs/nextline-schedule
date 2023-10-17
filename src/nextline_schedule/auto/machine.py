@@ -1,6 +1,7 @@
 import asyncio
+from collections.abc import AsyncIterator
 from logging import getLogger
-from typing import AsyncIterator, Protocol
+from typing import Protocol
 
 from nextline.utils import pubsub
 
