@@ -15,9 +15,14 @@ async def request_statement():
 
 
 async def test_turn_off_while_waiting():
-
     run_no = 1
-    nextline = Nextline(statement=f, run_no_start_from=run_no, timeout_on_exit=60)
+    nextline = Nextline(
+        statement=f,
+        run_no_start_from=run_no,
+        trace_threads=True,
+        trace_modules=True,
+        timeout_on_exit=60,
+    )
     auto_mode = build_auto_mode_state_machine(
         nextline=nextline, request_statement=request_statement
     )
