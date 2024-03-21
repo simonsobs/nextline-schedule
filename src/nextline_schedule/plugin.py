@@ -1,4 +1,5 @@
 from collections.abc import Mapping, MutableMapping
+from logging import getLogger
 from pathlib import Path
 from typing import Optional
 
@@ -6,6 +7,7 @@ from apluggy import asynccontextmanager
 from dynaconf import Dynaconf, Validator
 from nextlinegraphql.hook import spec
 
+from .__about__ import __version__
 from .auto import build_auto_mode_state_machine
 from .scheduler import DummyRequestStatement, RequestStatement
 from .schema import Mutation, Query, Subscription
@@ -39,6 +41,8 @@ class Plugin:
 
     @spec.hookimpl
     def configure(self, settings: Dynaconf):
+        logger = getLogger(__name__)
+        logger.info(f'{__package__} version: {__version__}')
         api_rul = settings.schedule.api
         length_minutes = settings.schedule.length_minutes
         policy = settings.schedule.policy
