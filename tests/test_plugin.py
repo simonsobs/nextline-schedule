@@ -1,7 +1,9 @@
 import asyncio
+from collections.abc import AsyncIterator
 
 import pytest
 from async_asgi_testclient import TestClient
+from nextlinegraphql import create_app
 from nextlinegraphql.plugins.ctrl.graphql import SUBSCRIBE_STATE
 from nextlinegraphql.plugins.graphql.test import gql_request, gql_subscribe
 from pytest_httpx import HTTPXMock
@@ -15,8 +17,15 @@ from nextline_schedule.graphql import (
 )
 
 
-async def test_run(client: TestClient):
+@pytest.fixture
+async def client() -> AsyncIterator[TestClient]:
+    app = create_app()  # the plugin is loaded here
+    async with TestClient(app) as y:
+        await asyncio.sleep(0)
+        yield y
 
+
+async def test_plugin(client: TestClient):
     turned_on = asyncio.Event()
     task = asyncio.create_task(subscribe_auto_mode_state(client, turned_on))
 
