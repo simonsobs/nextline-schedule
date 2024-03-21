@@ -1,6 +1,8 @@
 import strawberry
 from strawberry.types import Info
 
+import nextline_schedule
+
 
 def query_auto_mode_state(info: Info) -> str:
     auto_mode = info.context["auto_mode"]
@@ -36,6 +38,8 @@ class QueryScheduler:
 
 @strawberry.type
 class QuerySchedule:
+    version: str = nextline_schedule.__version__
+
     @strawberry.field
     def auto_mode(self, info: Info) -> QueryAutoMode:
         return QueryAutoMode()
