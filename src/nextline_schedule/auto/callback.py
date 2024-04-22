@@ -61,7 +61,7 @@ class Callback:
     async def run(self, started: asyncio.Event) -> None:
         try:
             await self._nextline.run_continue_and_wait(started)
-            if self._nextline.exception() is not None:
+            if self._nextline.format_exception():
                 await self.auto_mode.on_raised()  # type: ignore
                 return
             await self.auto_mode.on_finished()  # type: ignore

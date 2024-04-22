@@ -25,7 +25,7 @@ dependencies = ["transitions>=0.9", "httpx>=0.23"]
 dynamic = ["version"]
 
 [project.optional-dependencies]
-host = ["nextline-graphql>=0.5.5"]
+host = ["nextline-graphql>=0.7.6"]
 tests = [
   "async-asgi-testclient>=1.4",
   "pytest-asyncio>=0.18",
