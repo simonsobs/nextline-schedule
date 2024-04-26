@@ -33,7 +33,7 @@ class AutoModeStateMachine:
     def subscribe_state(self) -> AsyncIterator[str]:
         return self._pubsub_state.subscribe()
 
-    async def on_enter_waiting(self) -> None:
+    async def on_enter_auto_waiting(self) -> None:
         task = asyncio.create_task(self._callback.wait())
         self._task = task
         self._tasks.add(task)

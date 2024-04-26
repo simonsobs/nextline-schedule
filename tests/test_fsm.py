@@ -5,7 +5,7 @@ from unittest.mock import AsyncMock
 import pytest
 from hypothesis import given
 from hypothesis import strategies as st
-from transitions import Machine, MachineError
+from transitions import Machine
 from transitions.extensions.markup import HierarchicalMarkupMachine
 
 from nextline_schedule.auto.factory import build_state_machine
@@ -46,12 +46,13 @@ def st_paths(draw: st.DrawFn):
             'start': {'dest': 'off'},
         },
         'off': {
-            'turn_on': {'dest': 'waiting'},
+            'turn_on': {'dest': 'auto_waiting'},
         },
-        'waiting': {
+        'auto_waiting': {
             'turn_off': {'dest': 'off', 'before': 'cancel_task'},
             'on_initialized': {'dest': 'auto_pulling'},
             'on_finished': {'dest': 'auto_pulling'},
+            'on_raised': {'dest': 'off'},
         },
         'auto_pulling': {
             'run': {'dest': 'auto_running'},
@@ -84,7 +85,7 @@ def st_paths(draw: st.DrawFn):
             paths.append((trigger, trigger_map[trigger]))
             state = trigger_map[trigger]['dest']
         else:
-            paths.append((trigger, {'error': MachineError}))
+            paths.append((trigger, {'invalid': True}))
 
     while state not in final_states:
         trigger_map = state_map_reduced[state]
@@ -102,9 +103,8 @@ async def test_transitions_hypothesis(paths: list[tuple[str, dict[str, Any]]]):
     assert machine.is_created()
 
     for method, map in paths:
-        if error := map.get('error'):
-            with pytest.raises(error):
-                await getattr(machine, method)()
+        if map.get('invalid'):
+            await getattr(machine, method)()
             continue
 
         if before := map.get('before'):

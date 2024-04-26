@@ -36,7 +36,7 @@ async def test_one() -> None:
 
     expected = [
         'off',
-        'waiting',
+        'auto_waiting',
         'auto_pulling',
         'auto_running',
         'auto_pulling',
