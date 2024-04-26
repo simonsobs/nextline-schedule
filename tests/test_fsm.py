@@ -84,7 +84,7 @@ def st_paths(draw: st.DrawFn):
             paths.append((trigger, trigger_map[trigger]))
             state = trigger_map[trigger]['dest']
         else:
-            paths.append((trigger, {'error': MachineError}))
+            paths.append((trigger, {'invalid': True}))
 
     while state not in final_states:
         trigger_map = state_map_reduced[state]
@@ -102,8 +102,8 @@ async def test_transitions_hypothesis(paths: list[tuple[str, dict[str, Any]]]):
     assert machine.is_created()
 
     for method, map in paths:
-        if error := map.get('error'):
-            with pytest.raises(error):
+        if map.get('invalid'):
+            with pytest.raises(MachineError):
                 await getattr(machine, method)()
             continue
 
