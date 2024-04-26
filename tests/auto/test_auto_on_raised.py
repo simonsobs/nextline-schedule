@@ -38,7 +38,7 @@ async def test_on_raised_while_pulling():
                 if state == 'off':
                     break
 
-    expected = ['off', 'waiting', 'auto_pulling', 'off']
+    expected = ['off', 'auto_waiting', 'auto_pulling', 'off']
     assert expected == await states
 
 
@@ -61,7 +61,7 @@ async def test_on_raised_while_running():
                 if state == 'off':
                     break
 
-    expected = ['off', 'waiting', 'auto_pulling', 'auto_running', 'off']
+    expected = ['off', 'auto_waiting', 'auto_pulling', 'auto_running', 'off']
     assert expected == await states
 
 

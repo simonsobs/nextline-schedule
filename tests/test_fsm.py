@@ -46,12 +46,13 @@ def st_paths(draw: st.DrawFn):
             'start': {'dest': 'off'},
         },
         'off': {
-            'turn_on': {'dest': 'waiting'},
+            'turn_on': {'dest': 'auto_waiting'},
         },
-        'waiting': {
+        'auto_waiting': {
             'turn_off': {'dest': 'off', 'before': 'cancel_task'},
             'on_initialized': {'dest': 'auto_pulling'},
             'on_finished': {'dest': 'auto_pulling'},
+            'on_raised': {'dest': 'off'},
         },
         'auto_pulling': {
             'run': {'dest': 'auto_running'},

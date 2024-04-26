@@ -20,16 +20,17 @@ def build_state_machine(model=None, graph=False, asyncio=True, markup=False) -> 
          .-------------->|     Off     |<--------------.
          |               '-------------'               |
          |                      | turn_on()            |
-       turn_off()               |                      |
-         |                      v                      |
-         |               .-------------.               |
-         |---------------|   Waiting   |          on_raised()
-         |               '-------------'               |
-         |                      | on_initialized()     |
-         |                      | on_finished()        |
+       turn_off()               |                 on_raised()
+         |                      |                      |
          |                      |                      |
          |   .------------------+------------------.   |
          |   |   Auto           |                  |   |
+         |   |                  v                  |   |
+         |   |           .-------------.           |   |
+         |   |           |   Waiting   |           |   |
+         |   |           '-------------'           |   |
+         |   |                  | on_initialized() |   |
+         |   |                  | on_finished()    |   |
          |   |                  v                  |   |
          |   |           .-------------.           |   |
          |   |           |   Pulling   |           |   |
@@ -44,11 +45,11 @@ def build_state_machine(model=None, graph=False, asyncio=True, markup=False) -> 
              '-------------------------------------'
 
     >>> class Model:
-    ...     def on_enter_waiting(self):
+    ...     def on_enter_auto_waiting(self):
     ...         print('enter the waiting state')
     ...         self.on_finished()
     ...
-    ...     def on_exit_waiting(self):
+    ...     def on_exit_auto_waiting(self):
     ...        print('exit the waiting state')
     ...
     ...     def on_enter_auto_pulling(self):
@@ -88,12 +89,14 @@ def build_state_machine(model=None, graph=False, asyncio=True, markup=False) -> 
 
     auto_state_conf = {
         'name': 'auto',
-        'states': ['pulling', 'running'],
+        'states': ['waiting', 'pulling', 'running'],
         'transitions': [
+            ['on_initialized', 'waiting', 'pulling'],
+            ['on_finished', 'waiting', 'pulling'],
             ['run', 'pulling', 'running'],
             ['on_finished', 'running', 'pulling'],
         ],
-        'initial': 'pulling',
+        'initial': 'waiting',
         'queued': True,
         'ignore_invalid_triggers': True,
     }
@@ -109,18 +112,15 @@ def build_state_machine(model=None, graph=False, asyncio=True, markup=False) -> 
         'states': [
             'created',
             'off',
-            'waiting',
             {'name': 'auto', 'children': auto_state},
         ],
         'transitions': [
             ['start', 'created', 'off'],
-            ['turn_on', 'off', 'waiting'],
-            ['on_initialized', 'waiting', 'auto'],
-            ['on_finished', 'waiting', 'auto'],
+            ['turn_on', 'off', 'auto'],
             ['on_raised', 'auto', 'off'],
             {
                 'trigger': 'turn_off',
-                'source': ['waiting', 'auto'],
+                'source': 'auto',
                 'dest': 'off',
                 'before': 'cancel_task',
             },

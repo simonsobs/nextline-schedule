@@ -42,7 +42,7 @@ async def test_turn_off_while_waiting():
                 trace_no=prompt.trace_no,
             )
 
-    expected = ['off', 'waiting', 'off']
+    expected = ['off', 'auto_waiting', 'off']
     assert expected == await states
 
 
