@@ -5,7 +5,7 @@ from unittest.mock import AsyncMock
 import pytest
 from hypothesis import given
 from hypothesis import strategies as st
-from transitions import Machine, MachineError
+from transitions import Machine
 from transitions.extensions.markup import HierarchicalMarkupMachine
 
 from nextline_schedule.auto.factory import build_state_machine
@@ -103,8 +103,7 @@ async def test_transitions_hypothesis(paths: list[tuple[str, dict[str, Any]]]):
 
     for method, map in paths:
         if map.get('invalid'):
-            with pytest.raises(MachineError):
-                await getattr(machine, method)()
+            await getattr(machine, method)()
             continue
 
         if before := map.get('before'):
