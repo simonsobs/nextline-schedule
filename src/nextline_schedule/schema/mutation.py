@@ -1,21 +1,23 @@
-from typing import Optional
+from typing import Optional, cast
 
 import strawberry
 from nextline import Nextline
 from strawberry.types import Info
 
-from nextline_schedule.scheduler import RequestStatement
+from nextline_schedule.schedule import Schedule
 
 
 async def mutate_turn_on(info: Info) -> bool:
-    auto_mode = info.context["auto_mode"]
-    await auto_mode.turn_on()
+    schedule = cast(Schedule, info.context['schedule'])
+    auto_mode = schedule.auto_mode
+    await auto_mode.turn_on()  # type: ignore
     return True
 
 
 async def mutate_turn_off(info: Info) -> bool:
-    auto_mode = info.context["auto_mode"]
-    await auto_mode.turn_off()
+    schedule = cast(Schedule, info.context['schedule'])
+    auto_mode = schedule.auto_mode
+    await auto_mode.turn_off()  # type: ignore
     return True
 
 
@@ -36,7 +38,8 @@ class MutationSchedulerInput:
 class MutationScheduler:
     @strawberry.mutation
     def update(self, info: Info, input: MutationSchedulerInput) -> bool:
-        scheduler = info.context["scheduler"]
+        schedule = cast(Schedule, info.context['schedule'])
+        scheduler = schedule.scheduler
         if input.api_url is not None:
             scheduler._api_url = input.api_url
         if input.length_minutes is not None:
@@ -48,7 +51,8 @@ class MutationScheduler:
 
 async def mutate_load_script(info: Info) -> bool:
     nextline: Nextline = info.context["nextline"]
-    scheduler: RequestStatement = info.context["scheduler"]
+    schedule = cast(Schedule, info.context['schedule'])
+    scheduler = schedule.scheduler
     statement = await scheduler()
     await nextline.reset(statement=statement)
     return True

@@ -1,11 +1,15 @@
+from typing import cast
+
 import strawberry
 from strawberry.types import Info
 
-import nextline_schedule
+from nextline_schedule import __version__
+from nextline_schedule.schedule import Schedule
 
 
 def query_auto_mode_state(info: Info) -> str:
-    auto_mode = info.context["auto_mode"]
+    schedule = cast(Schedule, info.context['schedule'])
+    auto_mode = schedule.auto_mode
     return auto_mode.state
 
 
@@ -15,17 +19,20 @@ class QueryAutoMode:
 
 
 def query_scheduler_api_url(info: Info) -> str:
-    scheduler = info.context["scheduler"]
+    schedule = cast(Schedule, info.context['schedule'])
+    scheduler = schedule.scheduler
     return scheduler._api_url
 
 
 def query_scheduler_length_minutes(info: Info) -> int:
-    scheduler = info.context["scheduler"]
+    schedule = cast(Schedule, info.context['schedule'])
+    scheduler = schedule.scheduler
     return scheduler._length_minutes
 
 
 def query_scheduler_policy(info: Info) -> str:
-    scheduler = info.context["scheduler"]
+    schedule = cast(Schedule, info.context['schedule'])
+    scheduler = schedule.scheduler
     return scheduler._policy
 
 
@@ -38,7 +45,7 @@ class QueryScheduler:
 
 @strawberry.type
 class QuerySchedule:
-    version: str = nextline_schedule.__version__
+    version: str = __version__
 
     @strawberry.field
     def auto_mode(self, info: Info) -> QueryAutoMode:

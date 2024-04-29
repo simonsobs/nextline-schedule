@@ -29,6 +29,7 @@ class AutoModeStateMachine:
         self._logger = getLogger(__name__)
         machine = build_state_machine(model=self)
         machine.after_state_change = self.after_state_change.__name__  # type: ignore
+        self.state: str  # attached by machine
 
     def subscribe_state(self) -> AsyncIterator[str]:
         return self._pubsub_state.subscribe()
