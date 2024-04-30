@@ -1,0 +1,11 @@
+mutation QueuePush($input: ScheduleQueueAddItemInput!) {
+  schedule {
+    queue {
+      push(input: $input) {
+        name
+        createdAt
+        script
+      }
+    }
+  }
+}

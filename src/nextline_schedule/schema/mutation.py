@@ -7,6 +7,8 @@ from strawberry.types import Info
 from nextline_schedule.auto import AutoModeStateMachine
 from nextline_schedule.scheduler import RequestStatement
 
+from .queue import MutationScheduleQueue
+
 
 async def mutate_turn_on(info: Info) -> bool:
     auto_mode = info.context['schedule']['auto_mode']
@@ -72,6 +74,10 @@ class MutationSchedule:
     @strawberry.mutation
     async def load_script(self, info: Info) -> bool:
         return await mutate_load_script(info)
+
+    @strawberry.field
+    def queue(self) -> MutationScheduleQueue:
+        return MutationScheduleQueue()
 
 
 @strawberry.type

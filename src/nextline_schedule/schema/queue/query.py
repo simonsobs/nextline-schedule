@@ -1,24 +1,9 @@
-import datetime
-
 import strawberry
 from strawberry.types import Info
 
-from nextline_schedule.queue import Queue, QueueItem
+from nextline_schedule.queue import Queue
 
-
-@strawberry.type
-class QueryScheduleQueueItem:
-    name: str
-    created_at: datetime.datetime
-    script: str
-
-    @classmethod
-    def from_(cls, src: QueueItem) -> 'QueryScheduleQueueItem':
-        return cls(
-            name=src.name,
-            created_at=src.created_at,
-            script=src.script,
-        )
+from .types import QueryScheduleQueueItem
 
 
 async def resolve_items(info: Info) -> list[QueryScheduleQueueItem]:

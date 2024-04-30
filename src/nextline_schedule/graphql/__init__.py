@@ -5,6 +5,7 @@ pwd = Path(__file__).resolve().parent
 sub = pwd / 'mutations'
 MUTATE_AUTO_MODE_TURN_ON = (sub / 'AutoModeTurnOn.gql').read_text()
 MUTATE_AUTO_MODE_TURN_OFF = (sub / 'AutoModeTurnOff.gql').read_text()
+MUTATE_QUEUE_PUSH = (sub / 'QueuePush.gql').read_text()
 
 
 sub = pwd / 'queries'
