@@ -1,0 +1,11 @@
+query QScheduleQueueItems {
+  schedule {
+    queue {
+      items {
+        name
+        createdAt
+        script
+      }
+    }
+  }
+}

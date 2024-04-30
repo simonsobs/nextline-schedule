@@ -11,6 +11,7 @@ sub = pwd / 'queries'
 QUERY_AUTO_MODE = (sub / 'AutoMode.gql').read_text()
 QUERY_SCHEDULER = (sub / 'Scheduler.gql').read_text()
 QUERY_VERSION = (sub / 'Version.gql').read_text()
+QUERY_SCHEDULE_QUEUE_ITEMS = (sub / 'QueueItems.gql').read_text()
 
 sub = pwd / 'subscriptions'
 SUBSCRIBE_AUTO_MODE_STATE = (sub / 'ScheduleAutoModeState.gql').read_text()
