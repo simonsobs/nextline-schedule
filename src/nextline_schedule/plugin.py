@@ -9,7 +9,6 @@ from nextlinegraphql.hook import spec
 
 from .__about__ import __version__
 from .auto import build_auto_mode_state_machine
-from .schedule import Schedule
 from .scheduler import DummyRequestStatement, RequestStatement
 from .schema import Mutation, Query, Subscription
 
@@ -68,7 +67,5 @@ class Plugin:
 
     @spec.hookimpl
     def update_strawberry_context(self, context: MutableMapping) -> None:
-        schedule = Schedule(
-            auto_mode=self._auto_mode, scheduler=self._request_statement
-        )
+        schedule = {'auto_mode': self._auto_mode, 'scheduler': self._request_statement}
         context['schedule'] = schedule
