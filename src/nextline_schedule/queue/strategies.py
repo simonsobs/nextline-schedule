@@ -4,7 +4,7 @@ from hypothesis import strategies as st
 
 from nextline_schedule.utils.strategies import st_datetimes, st_python_scripts
 
-from .queue import Queue, QueueItem
+from .queue import PushArg, Queue, QueueItem
 
 
 def st_queue_item() -> st.SearchStrategy[QueueItem]:
@@ -12,6 +12,14 @@ def st_queue_item() -> st.SearchStrategy[QueueItem]:
         QueueItem,
         name=st.text(),
         created_at=st_datetimes(),
+        script=st_python_scripts(),
+    )
+
+
+def st_push_arg() -> st.SearchStrategy[PushArg]:
+    return st.builds(
+        PushArg,
+        name=st.text(),
         script=st_python_scripts(),
     )
 
