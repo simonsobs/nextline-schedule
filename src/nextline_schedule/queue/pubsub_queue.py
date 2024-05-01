@@ -34,8 +34,7 @@ class PubSubQueue:
         return item
 
     async def remove(self, id: int) -> bool:
-        item = self._queue.remove(id)
-        if item is None:
+        if not self._queue.remove(id):
             return False
         await self._pubsub.publish(list(self._queue.items))
         return True
