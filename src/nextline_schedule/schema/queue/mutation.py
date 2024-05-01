@@ -28,6 +28,13 @@ async def mutate_push(
     return QueryScheduleQueueItem.from_(item)
 
 
+async def mutate_remove(info: Info, id: int) -> bool:
+    queue = info.context['schedule']['queue']
+    assert isinstance(queue, PubSubQueue)
+    return await queue.remove(id)
+
+
 @strawberry.type
 class MutationScheduleQueue:
     push: QueryScheduleQueueItem = strawberry.field(resolver=mutate_push)
+    remove: bool = strawberry.field(resolver=mutate_remove)
