@@ -7,9 +7,10 @@ from nextline_schedule.utils.strategies import st_datetimes, st_python_scripts
 from .queue import PushArg, Queue, QueueItem
 
 
-def st_queue_item() -> st.SearchStrategy[QueueItem]:
+def st_queue_item(id: int) -> st.SearchStrategy[QueueItem]:
     return st.builds(
         QueueItem,
+        id=st.just(id),
         name=st.text(),
         created_at=st_datetimes(),
         script=st_python_scripts(),
@@ -24,10 +25,12 @@ def st_push_arg() -> st.SearchStrategy[PushArg]:
     )
 
 
+@st.composite
 def st_queue_item_list(
-    min_size: int = 0, max_size: Optional[int] = None
-) -> st.SearchStrategy[list[QueueItem]]:
-    return st.lists(st_queue_item(), min_size=min_size, max_size=max_size)
+    draw: st.DrawFn, min_size: int = 0, max_size: Optional[int] = None
+) -> list[QueueItem]:
+    size = draw(st.integers(min_value=min_size, max_value=max_size))
+    return [draw(st_queue_item(id=i)) for i in range(size)] 
 
 
 def st_queue(
