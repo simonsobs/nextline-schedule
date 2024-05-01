@@ -2,6 +2,7 @@ query QScheduleQueueItems {
   schedule {
     queue {
       items {
+        id
         name
         createdAt
         script

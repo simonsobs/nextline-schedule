@@ -2,6 +2,7 @@ mutation QueuePush($input: ScheduleQueueAddItemInput!) {
   schedule {
     queue {
       push(input: $input) {
+        id
         name
         createdAt
         script
