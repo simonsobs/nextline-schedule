@@ -42,3 +42,9 @@ class Queue:
         item = arg.to_queue_item(id=self._id_counter())
         self.items.append(item)
         return item
+
+    def pop(self) -> QueueItem | None:
+        try:
+            return self.items.popleft()
+        except IndexError:
+            return None

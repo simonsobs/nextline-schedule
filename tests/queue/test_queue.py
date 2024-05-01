@@ -20,3 +20,14 @@ def test_push(queue: Queue, push_arg: PushArg):
     assert item.script == push_arg.script
     assert len(queue) == initial_len + 1
     assert len(set(i.id for i in queue.items)) == len(queue)
+
+
+@given(queue=st_queue())
+def test_pop(queue: Queue):
+    initial_len = len(queue)
+    if initial_len == 0:
+        assert queue.pop() is None
+        return
+    item = queue.pop()
+    assert len(queue) == initial_len - 1
+    assert item not in queue.items
