@@ -1,7 +1,7 @@
 import strawberry
 from strawberry.types import Info
 
-from nextline_schedule.queue import PushArg, Queue
+from nextline_schedule.queue import PubSubQueue, PushArg
 
 from .types import QueryScheduleQueueItem
 
@@ -18,11 +18,13 @@ class ScheduleQueueAddItemInput:
         )
 
 
-def mutate_push(info: Info, input: ScheduleQueueAddItemInput) -> QueryScheduleQueueItem:
+async def mutate_push(
+    info: Info, input: ScheduleQueueAddItemInput
+) -> QueryScheduleQueueItem:
     queue = info.context['schedule']['queue']
-    assert isinstance(queue, Queue)
+    assert isinstance(queue, PubSubQueue)
     push_arg = input.to_push_arg()
-    item = queue.push(push_arg)
+    item = await queue.push(push_arg)
     return QueryScheduleQueueItem.from_(item)
 
 
