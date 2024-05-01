@@ -7,7 +7,7 @@ from .types import QueryScheduleQueueItem
 
 
 @strawberry.input
-class ScheduleQueueAddItemInput:
+class ScheduleQueuePushInput:
     name: str
     script: str
 
@@ -19,7 +19,7 @@ class ScheduleQueueAddItemInput:
 
 
 async def mutate_push(
-    info: Info, input: ScheduleQueueAddItemInput
+    info: Info, input: ScheduleQueuePushInput
 ) -> QueryScheduleQueueItem:
     queue = info.context['schedule']['queue']
     assert isinstance(queue, PubSubQueue)
