@@ -1,4 +1,11 @@
-__all__ = ['MutationScheduleQueue', 'QueryScheduleQueue']
+__all__ = [
+    'MutationScheduleQueue',
+    'QueryScheduleQueue',
+    'subscribe_schedule_queue_items',
+    'QueryScheduleQueueItem',
+]
 
 from .mutation import MutationScheduleQueue
 from .query import QueryScheduleQueue
+from .subscription import subscribe_schedule_queue_items
+from .types import QueryScheduleQueueItem
