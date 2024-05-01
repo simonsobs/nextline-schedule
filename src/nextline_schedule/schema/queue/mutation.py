@@ -3,7 +3,7 @@ from strawberry.types import Info
 
 from nextline_schedule.queue import PubSubQueue, PushArg
 
-from .types import QueryScheduleQueueItem
+from .types import ScheduleQueueItem
 
 
 @strawberry.input
@@ -18,14 +18,12 @@ class ScheduleQueuePushInput:
         )
 
 
-async def mutate_push(
-    info: Info, input: ScheduleQueuePushInput
-) -> QueryScheduleQueueItem:
+async def mutate_push(info: Info, input: ScheduleQueuePushInput) -> ScheduleQueueItem:
     queue = info.context['schedule']['queue']
     assert isinstance(queue, PubSubQueue)
     push_arg = input.to_push_arg()
     item = await queue.push(push_arg)
-    return QueryScheduleQueueItem.from_(item)
+    return ScheduleQueueItem.from_(item)
 
 
 async def mutate_remove(info: Info, id: int) -> bool:
@@ -36,5 +34,5 @@ async def mutate_remove(info: Info, id: int) -> bool:
 
 @strawberry.type
 class MutationScheduleQueue:
-    push: QueryScheduleQueueItem = strawberry.field(resolver=mutate_push)
+    push: ScheduleQueueItem = strawberry.field(resolver=mutate_push)
     remove: bool = strawberry.field(resolver=mutate_remove)
