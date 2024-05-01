@@ -31,3 +31,18 @@ def test_pop(queue: Queue):
     item = queue.pop()
     assert len(queue) == initial_len - 1
     assert item not in queue.items
+
+
+@given(queue=st_queue())
+def test_remove(queue: Queue):
+    initial_len = len(queue)
+    if initial_len == 0:
+        assert not queue.remove(0)
+        return
+    item = queue.items[0]
+    assert queue.remove(item.id)
+    assert len(queue) == initial_len - 1
+    assert item not in queue.items
+    assert not queue.remove(item.id)
+    assert len(queue) == initial_len - 1
+    assert item not in queue.items
