@@ -3,14 +3,14 @@ import time
 
 from nextline import Nextline
 
-from nextline_schedule.auto import AutoModeStateMachine, AutoMode
+from nextline_schedule.auto import AutoMode, AutoModeStateMachine
 
 
 def f():
     time.sleep(0.001)
 
 
-async def request_statement():
+async def pull():
     return f
 
 
@@ -23,7 +23,7 @@ async def test_turn_off_while_waiting():
         trace_modules=True,
         timeout_on_exit=60,
     )
-    auto_mode = AutoMode(nextline=nextline, request_statement=request_statement)
+    auto_mode = AutoMode(nextline=nextline, pull_func=pull)
 
     states = asyncio.create_task(subscribe_state(auto_mode))
 

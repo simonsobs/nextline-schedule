@@ -63,11 +63,9 @@ class Plugin:
     async def lifespan(self, context: Mapping):
         nextline = context['nextline']
         self._queue = PubSubQueue()
-        request_statement = self._scheduler
-        # request_statement = self._dummy
-        self._auto_mode = AutoMode(
-            nextline=nextline, request_statement=request_statement
-        )
+        pull_func = self._scheduler
+        # pull_func = self._dummy
+        self._auto_mode = AutoMode(nextline=nextline, pull_func=pull_func)
         async with self._queue, self._auto_mode as y:
             yield y
 

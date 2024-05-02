@@ -15,11 +15,9 @@ class AutoMode:
     def __init__(
         self,
         nextline: Nextline,
-        request_statement: Callable[[], Coroutine[Any, Any, Statement]],
+        pull_func: Callable[[], Coroutine[Any, Any, Statement]],
     ):
-        self._machine = build_state_machine(
-            nextline=nextline, request_statement=request_statement
-        )
+        self._machine = build_state_machine(nextline=nextline, pull_func=pull_func)
 
     @property
     def state(self) -> str:
@@ -44,9 +42,9 @@ class AutoMode:
 
 def build_state_machine(
     nextline: Nextline,
-    request_statement: Callable[[], Coroutine[Any, Any, Statement]],
+    pull_func: Callable[[], Coroutine[Any, Any, Statement]],
 ) -> AutoModeStateMachine:
-    callback = Callback(nextline=nextline, request_statement=request_statement)
+    callback = Callback(nextline=nextline, pull_func=pull_func)
     machine = AutoModeStateMachine(callback=callback)
     callback.machine = machine
     plugin = ScheduleAutoMode(machine=machine)
@@ -80,10 +78,10 @@ class Callback:
     def __init__(
         self,
         nextline: Nextline,
-        request_statement: Callable[[], Coroutine[Any, Any, Statement]],
+        pull_func: Callable[[], Coroutine[Any, Any, Statement]],
     ):
         self._nextline = nextline
-        self._request_statement = request_statement
+        self._pull = pull_func
         self._logger = getLogger(__name__)
         self.machine: AutoModeStateMachine  # to be set
 
@@ -97,7 +95,7 @@ class Callback:
     async def pull(self) -> None:
         try:
             try:
-                statement = await self._request_statement()
+                statement = await self._pull()
             except Exception:
                 self._logger.exception('')
                 await self.machine.on_raised()  # type: ignore

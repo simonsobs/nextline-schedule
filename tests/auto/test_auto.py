@@ -23,8 +23,8 @@ async def test_one() -> None:
     run_no = 1
     statement = STATEMENT.format(run_no=run_no)
     nextline = Nextline(statement=statement, run_no_start_from=run_no)
-    request_statement = RequestStatement(nextline=nextline)
-    auto_mode = AutoMode(nextline=nextline, request_statement=request_statement)
+    pull = RequestStatement(nextline=nextline)
+    auto_mode = AutoMode(nextline=nextline, pull_func=pull)
 
     states = asyncio.create_task(subscribe_state(auto_mode))
 
