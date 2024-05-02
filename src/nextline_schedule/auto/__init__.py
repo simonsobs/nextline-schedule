@@ -4,4 +4,4 @@ __all__ = [
 ]
 
 from .callback import build_auto_mode
-from .machine import AutoModeStateMachine
+from .state_machine import AutoModeStateMachine

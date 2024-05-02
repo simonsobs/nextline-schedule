@@ -7,7 +7,7 @@ from nextline.plugin.spec import Context, hookimpl
 
 from nextline_schedule.types import Statement
 
-from .machine import AutoModeStateMachine
+from .state_machine.machine import AutoModeStateMachine
 
 
 def build_auto_mode(
