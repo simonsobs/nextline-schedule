@@ -20,8 +20,6 @@ class AutoMode:
         self._machine = build_state_machine(
             nextline=nextline, request_statement=request_statement
         )
-        plugin = ScheduleAutoMode(machine=self._machine)
-        nextline.register(plugin)
 
     @property
     def state(self) -> str:
@@ -51,12 +49,14 @@ def build_state_machine(
     callback = Callback(nextline=nextline, request_statement=request_statement)
     machine = AutoModeStateMachine(callback=callback)
     callback.machine = machine
+    plugin = ScheduleAutoMode(machine=machine)
+    nextline.register(plugin)
     return machine
 
 
 class ScheduleAutoMode:
     '''A plugin for Nextline.
-    
+
     The name of this class appears as the plugin name in the log.
     '''
 
