@@ -20,8 +20,8 @@ class AutoMode:
         self._machine = build_state_machine(
             nextline=nextline, request_statement=request_statement
         )
-        on_call = OnCall(auto_mode=self._machine)
-        nextline.register(on_call)
+        plugin = ScheduleAutoMode(machine=self._machine)
+        nextline.register(plugin)
 
     @property
     def state(self) -> str:
@@ -50,25 +50,30 @@ def build_state_machine(
 ) -> AutoModeStateMachine:
     callback = Callback(nextline=nextline, request_statement=request_statement)
     machine = AutoModeStateMachine(callback=callback)
-    callback.auto_mode = machine
+    callback.machine = machine
     return machine
 
 
-class OnCall:
-    def __init__(self, auto_mode: AutoModeStateMachine):
-        self.auto_mode = auto_mode
+class ScheduleAutoMode:
+    '''A plugin for Nextline.
+    
+    The name of this class appears as the plugin name in the log.
+    '''
+
+    def __init__(self, machine: AutoModeStateMachine):
+        self._machine = machine
 
     @hookimpl
     async def on_initialize_run(self) -> None:
-        await self.auto_mode.on_initialized()  # type: ignore
+        await self._machine.on_initialized()  # type: ignore
 
     @hookimpl
     async def on_finished(self, context: Context) -> None:
         nextline = context.nextline
         if nextline.format_exception():
-            await self.auto_mode.on_raised()  # type: ignore
+            await self._machine.on_raised()  # type: ignore
             return
-        await self.auto_mode.on_finished()  # type: ignore
+        await self._machine.on_finished()  # type: ignore
 
 
 class Callback:
@@ -80,14 +85,14 @@ class Callback:
         self._nextline = nextline
         self._request_statement = request_statement
         self._logger = getLogger(__name__)
-        self.auto_mode: AutoModeStateMachine  # to be set
+        self.machine: AutoModeStateMachine  # to be set
 
     async def wait(self) -> None:
         match self._nextline.state:
             case 'initialized':
-                await self.auto_mode.on_initialized()  # type: ignore
+                await self.machine.on_initialized()  # type: ignore
             case 'finished':
-                await self.auto_mode.on_finished()  # type: ignore
+                await self.machine.on_finished()  # type: ignore
 
     async def pull(self) -> None:
         try:
@@ -95,10 +100,10 @@ class Callback:
                 statement = await self._request_statement()
             except Exception:
                 self._logger.exception('')
-                await self.auto_mode.on_raised()  # type: ignore
+                await self.machine.on_raised()  # type: ignore
                 return
             await self._nextline.reset(statement=statement)
-            await self.auto_mode.run()  # type: ignore
+            await self.machine.run()  # type: ignore
         except asyncio.CancelledError:
             self._logger.info(f'{self.__class__.__name__}.pull() cancelled')
 
