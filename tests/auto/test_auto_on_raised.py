@@ -3,7 +3,7 @@ import time
 
 from nextline import Nextline
 
-from nextline_schedule.auto import AutoModeStateMachine, build_auto_mode_state_machine
+from nextline_schedule.auto import AutoModeStateMachine, build_auto_mode
 
 
 class MockError(Exception):
@@ -25,9 +25,7 @@ async def test_on_raised_while_pulling():
 
     run_no = 1
     nextline = Nextline(statement=f, run_no_start_from=run_no, timeout_on_exit=60)
-    auto_mode = build_auto_mode_state_machine(
-        nextline=nextline, request_statement=request_statement
-    )
+    auto_mode = build_auto_mode(nextline=nextline, request_statement=request_statement)
 
     states = asyncio.create_task(subscribe_state(auto_mode))
 
@@ -48,9 +46,7 @@ async def test_on_raised_while_running():
 
     run_no = 1
     nextline = Nextline(statement=f, run_no_start_from=run_no, timeout_on_exit=60)
-    auto_mode = build_auto_mode_state_machine(
-        nextline=nextline, request_statement=request_statement
-    )
+    auto_mode = build_auto_mode(nextline=nextline, request_statement=request_statement)
 
     states = asyncio.create_task(subscribe_state(auto_mode))
 

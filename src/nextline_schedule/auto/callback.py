@@ -10,15 +10,25 @@ from nextline_schedule.types import Statement
 from .machine import AutoModeStateMachine
 
 
-def build_auto_mode_state_machine(
+def build_auto_mode(
+    nextline: Nextline,
+    request_statement: Callable[[], Coroutine[Any, Any, Statement]],
+) -> AutoModeStateMachine:
+    machine = build_state_machine(
+        nextline=nextline, request_statement=request_statement
+    )
+    on_call = OnCall(auto_mode=machine)
+    nextline.register(on_call)
+    return machine
+
+
+def build_state_machine(
     nextline: Nextline,
     request_statement: Callable[[], Coroutine[Any, Any, Statement]],
 ) -> AutoModeStateMachine:
     callback = Callback(nextline=nextline, request_statement=request_statement)
     machine = AutoModeStateMachine(callback=callback)
     callback.auto_mode = machine
-    on_call = OnCall(auto_mode=machine)
-    nextline.register(on_call)
     return machine
 
 
