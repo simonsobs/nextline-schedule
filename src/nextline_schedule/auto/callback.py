@@ -1,4 +1,5 @@
 import asyncio
+from collections.abc import AsyncIterator
 from logging import getLogger
 from typing import Any, Callable, Coroutine
 
@@ -10,16 +11,37 @@ from nextline_schedule.types import Statement
 from .state_machine.machine import AutoModeStateMachine
 
 
-def build_auto_mode(
-    nextline: Nextline,
-    request_statement: Callable[[], Coroutine[Any, Any, Statement]],
-) -> AutoModeStateMachine:
-    machine = build_state_machine(
-        nextline=nextline, request_statement=request_statement
-    )
-    on_call = OnCall(auto_mode=machine)
-    nextline.register(on_call)
-    return machine
+class AutoMode:
+    def __init__(
+        self,
+        nextline: Nextline,
+        request_statement: Callable[[], Coroutine[Any, Any, Statement]],
+    ):
+        self._machine = build_state_machine(
+            nextline=nextline, request_statement=request_statement
+        )
+        on_call = OnCall(auto_mode=self._machine)
+        nextline.register(on_call)
+
+    @property
+    def state(self) -> str:
+        return self._machine.state
+
+    def subscribe_state(self) -> AsyncIterator[str]:
+        return self._machine.subscribe_state()
+
+    async def turn_on(self) -> None:
+        await self._machine.turn_on()  # type: ignore
+
+    async def turn_off(self) -> None:
+        await self._machine.turn_off()  # type: ignore
+
+    async def __aenter__(self) -> 'AutoMode':
+        await self._machine.__aenter__()
+        return self
+
+    async def __aexit__(self, exc_type, exc_value, traceback) -> None:
+        await self._machine.__aexit__(exc_type, exc_value, traceback)
 
 
 def build_state_machine(

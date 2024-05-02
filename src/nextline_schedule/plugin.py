@@ -8,7 +8,7 @@ from dynaconf import Dynaconf, Validator
 from nextlinegraphql.hook import spec
 
 from .__about__ import __version__
-from .auto import build_auto_mode
+from .auto import AutoMode
 from .dummy import DummyRequestStatement
 from .queue import PubSubQueue
 from .scheduler import RequestStatement
@@ -65,7 +65,7 @@ class Plugin:
         self._queue = PubSubQueue()
         request_statement = self._scheduler
         # request_statement = self._dummy
-        self._auto_mode = build_auto_mode(
+        self._auto_mode = AutoMode(
             nextline=nextline, request_statement=request_statement
         )
         async with self._queue, self._auto_mode as y:

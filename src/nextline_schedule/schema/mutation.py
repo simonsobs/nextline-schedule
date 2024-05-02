@@ -4,7 +4,7 @@ import strawberry
 from nextline import Nextline
 from strawberry.types import Info
 
-from nextline_schedule.auto import AutoModeStateMachine
+from nextline_schedule.auto import AutoMode
 from nextline_schedule.scheduler import RequestStatement
 
 from .queue import MutationScheduleQueue
@@ -12,15 +12,15 @@ from .queue import MutationScheduleQueue
 
 async def mutate_turn_on(info: Info) -> bool:
     auto_mode = info.context['schedule']['auto_mode']
-    assert isinstance(auto_mode, AutoModeStateMachine)
-    await auto_mode.turn_on()  # type: ignore
+    assert isinstance(auto_mode, AutoMode)
+    await auto_mode.turn_on()
     return True
 
 
 async def mutate_turn_off(info: Info) -> bool:
     auto_mode = info.context['schedule']['auto_mode']
-    assert isinstance(auto_mode, AutoModeStateMachine)
-    await auto_mode.turn_off()  # type: ignore
+    assert isinstance(auto_mode, AutoMode)
+    await auto_mode.turn_off()
     return True
 
 

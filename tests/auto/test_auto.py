@@ -2,7 +2,7 @@ import asyncio
 
 from nextline import Nextline
 
-from nextline_schedule.auto import AutoModeStateMachine, build_auto_mode
+from nextline_schedule.auto import AutoMode
 
 STATEMENT = '''
 """run_no: {run_no}"""
@@ -24,7 +24,7 @@ async def test_one() -> None:
     statement = STATEMENT.format(run_no=run_no)
     nextline = Nextline(statement=statement, run_no_start_from=run_no)
     request_statement = RequestStatement(nextline=nextline)
-    auto_mode = build_auto_mode(nextline=nextline, request_statement=request_statement)
+    auto_mode = AutoMode(nextline=nextline, request_statement=request_statement)
 
     states = asyncio.create_task(subscribe_state(auto_mode))
 
@@ -44,7 +44,7 @@ async def test_one() -> None:
     assert expected == await states
 
 
-async def control(auto_mode: AutoModeStateMachine, nextline: Nextline):
+async def control(auto_mode: AutoMode, nextline: Nextline):
     assert auto_mode.state == 'off'  # type: ignore
     await auto_mode.turn_on()  # type: ignore
     async for run_info in nextline.subscribe_run_info():
@@ -53,5 +53,5 @@ async def control(auto_mode: AutoModeStateMachine, nextline: Nextline):
     await auto_mode.turn_off()  # type: ignore
 
 
-async def subscribe_state(auto_mode: AutoModeStateMachine):
+async def subscribe_state(auto_mode: AutoMode):
     return [state async for state in auto_mode.subscribe_state()]
