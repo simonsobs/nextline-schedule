@@ -9,8 +9,9 @@ from nextlinegraphql.hook import spec
 
 from .__about__ import __version__
 from .auto import build_auto_mode_state_machine
+from .dummy import DummyRequestStatement
 from .queue import PubSubQueue
-from .scheduler import DummyRequestStatement, RequestStatement
+from .scheduler import RequestStatement
 from .schema import Mutation, Query, Subscription
 
 HERE = Path(__file__).resolve().parent
