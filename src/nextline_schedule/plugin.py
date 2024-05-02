@@ -48,7 +48,8 @@ class Plugin:
         length_minutes = settings.schedule.length_minutes
         policy = settings.schedule.policy
 
-        self._request_statement = RequestStatement(
+        self._dummy = DummyRequestStatement()
+        self._scheduler = RequestStatement(
             api_url=api_rul, length_minutes=length_minutes, policy=policy
         )
 
@@ -61,8 +62,10 @@ class Plugin:
     async def lifespan(self, context: Mapping):
         nextline = context['nextline']
         self._queue = PubSubQueue()
+        request_statement = self._scheduler
+        # request_statement = self._dummy
         self._auto_mode = build_auto_mode_state_machine(
-            nextline=nextline, request_statement=self._request_statement
+            nextline=nextline, request_statement=request_statement
         )
         async with self._queue, self._auto_mode as y:
             yield y
@@ -71,7 +74,7 @@ class Plugin:
     def update_strawberry_context(self, context: MutableMapping) -> None:
         schedule = {
             'auto_mode': self._auto_mode,
-            'scheduler': self._request_statement,
+            'scheduler': self._scheduler,
             'queue': self._queue,
         }
         context['schedule'] = schedule

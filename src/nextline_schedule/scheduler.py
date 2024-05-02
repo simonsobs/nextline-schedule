@@ -38,7 +38,7 @@ class RequestStatement:
         return response.json()['commands']
 
 
-class DummyRequestStatement(RequestStatement):
+class DummyRequestStatement:
     async def __call__(self) -> str:
         return generate_dummy_statement()
 
