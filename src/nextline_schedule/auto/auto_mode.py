@@ -1,19 +1,13 @@
 from collections.abc import AsyncIterator
-from typing import Any, Callable, Coroutine
 
 from nextline import Nextline
 
-from nextline_schedule.types import Statement
-
 from .callback import build_state_machine
+from .types import PullFunc
 
 
 class AutoMode:
-    def __init__(
-        self,
-        nextline: Nextline,
-        pull_func: Callable[[], Coroutine[Any, Any, Statement]],
-    ):
+    def __init__(self, nextline: Nextline, pull_func: PullFunc):
         self._machine = build_state_machine(nextline=nextline, pull_func=pull_func)
 
     @property

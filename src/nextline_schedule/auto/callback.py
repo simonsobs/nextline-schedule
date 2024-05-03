@@ -1,18 +1,15 @@
 import asyncio
 from logging import getLogger
-from typing import Any, Callable, Coroutine
 
 from nextline import Nextline
 from nextline.plugin.spec import Context, hookimpl
 
-from nextline_schedule.types import Statement
-
 from .state_machine.machine import AutoModeStateMachine
+from .types import PullFunc
 
 
 def build_state_machine(
-    nextline: Nextline,
-    pull_func: Callable[[], Coroutine[Any, Any, Statement]],
+    nextline: Nextline, pull_func: PullFunc
 ) -> AutoModeStateMachine:
     callback = Callback(nextline=nextline, pull_func=pull_func)
     machine = AutoModeStateMachine(callback=callback)
@@ -45,11 +42,7 @@ class ScheduleAutoMode:
 
 
 class Callback:
-    def __init__(
-        self,
-        nextline: Nextline,
-        pull_func: Callable[[], Coroutine[Any, Any, Statement]],
-    ):
+    def __init__(self, nextline: Nextline, pull_func: PullFunc):
         self._nextline = nextline
         self._pull = pull_func
         self._logger = getLogger(__name__)
