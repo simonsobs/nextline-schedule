@@ -23,7 +23,7 @@ async def test_turn_off_while_waiting():
         trace_modules=True,
         timeout_on_exit=60,
     )
-    auto_mode = AutoMode(nextline=nextline, pull_func=pull)
+    auto_mode = AutoMode(nextline=nextline, scheduler=pull)
 
     states = asyncio.create_task(subscribe_state(auto_mode))
 

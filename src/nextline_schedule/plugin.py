@@ -65,7 +65,7 @@ class Plugin:
         self._queue = PubSubQueue()
         pull_func = self._scheduler
         # pull_func = self._dummy
-        self._auto_mode = AutoMode(nextline=nextline, pull_func=pull_func)
+        self._auto_mode = AutoMode(nextline=nextline, scheduler=pull_func)
         async with self._queue, self._auto_mode as y:
             yield y
 

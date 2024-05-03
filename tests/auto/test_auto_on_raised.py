@@ -25,7 +25,7 @@ async def test_on_raised_while_pulling():
 
     run_no = 1
     nextline = Nextline(statement=f, run_no_start_from=run_no, timeout_on_exit=60)
-    auto_mode = AutoMode(nextline=nextline, pull_func=pull)
+    auto_mode = AutoMode(nextline=nextline, scheduler=pull)
 
     states = asyncio.create_task(subscribe_state(auto_mode))
 
@@ -46,7 +46,7 @@ async def test_on_raised_while_running():
 
     run_no = 1
     nextline = Nextline(statement=f, run_no_start_from=run_no, timeout_on_exit=60)
-    auto_mode = AutoMode(nextline=nextline, pull_func=request_statement)
+    auto_mode = AutoMode(nextline=nextline, scheduler=request_statement)
 
     states = asyncio.create_task(subscribe_state(auto_mode))
 

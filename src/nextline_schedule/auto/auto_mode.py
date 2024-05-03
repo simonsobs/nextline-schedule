@@ -9,8 +9,8 @@ from .types import PullFunc
 
 
 class AutoMode:
-    def __init__(self, nextline: Nextline, pull_func: PullFunc):
-        self._pull_from = PullFrom(scheduler=pull_func)
+    def __init__(self, nextline: Nextline, scheduler: PullFunc):
+        self._pull_from = PullFrom(scheduler=scheduler)
         self._machine = build_state_machine(
             nextline=nextline, pull_func=self._pull_from
         )

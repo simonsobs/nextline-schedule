@@ -24,7 +24,7 @@ async def test_one() -> None:
     statement = STATEMENT.format(run_no=run_no)
     nextline = Nextline(statement=statement, run_no_start_from=run_no)
     pull = RequestStatement(nextline=nextline)
-    auto_mode = AutoMode(nextline=nextline, pull_func=pull)
+    auto_mode = AutoMode(nextline=nextline, scheduler=pull)
 
     states = asyncio.create_task(subscribe_state(auto_mode))
 
