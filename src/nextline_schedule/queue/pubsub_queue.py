@@ -1,4 +1,5 @@
 from collections.abc import AsyncIterator, Iterable
+from logging import getLogger
 from typing import Optional
 
 from nextline.utils import pubsub
@@ -6,10 +7,22 @@ from nextline.utils import pubsub
 from .queue import PushArg, Queue, QueueItem
 
 
+class QueueEmpty(Exception):
+    pass
+
+
 class PubSubQueue:
     def __init__(self, items: Optional[Iterable[QueueItem]] = None):
         self._pubsub = pubsub.PubSubItem[list[QueueItem]]()
         self._queue = Queue(items)
+        self._logger = getLogger(__name__)
+
+    async def __call__(self) -> str:
+        item = await self.pop()
+        if item is None:
+            self._logger.info('Queue is empty')
+            raise QueueEmpty
+        return item.script
 
     @property
     def items(self):
