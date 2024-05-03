@@ -5,6 +5,16 @@ from nextline import Nextline
 
 from nextline_schedule.auto import AutoMode, AutoModeStateMachine
 
+STATEMENT_QUEUE = '''
+"""queue"""
+import time
+time.sleep(0.01)
+'''
+
+
+async def mock_queue() -> str:
+    return STATEMENT_QUEUE
+
 
 def f():
     time.sleep(0.001)
@@ -23,7 +33,7 @@ async def test_turn_off_while_waiting():
         trace_modules=True,
         timeout_on_exit=60,
     )
-    auto_mode = AutoMode(nextline=nextline, scheduler=pull)
+    auto_mode = AutoMode(nextline=nextline, scheduler=pull, queue=mock_queue)
 
     states = asyncio.create_task(subscribe_state(auto_mode))
 

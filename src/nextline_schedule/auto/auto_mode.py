@@ -9,8 +9,8 @@ from .types import PullFunc
 
 
 class AutoMode:
-    def __init__(self, nextline: Nextline, scheduler: PullFunc):
-        self._pull_from = PullFrom(scheduler=scheduler)
+    def __init__(self, nextline: Nextline, scheduler: PullFunc, queue: PullFunc):
+        self._pull_from = PullFrom(scheduler=scheduler, queue=queue)
         self._machine = build_state_machine(
             nextline=nextline, pull_func=self._pull_from
         )
@@ -37,8 +37,9 @@ class AutoMode:
 
 
 class PullFrom:
-    def __init__(self, scheduler: PullFunc):
+    def __init__(self, scheduler: PullFunc, queue: PullFunc):
         self._scheduler = scheduler
+        self._queue = queue
         self._pull = self._scheduler
 
     async def __call__(self) -> Statement:

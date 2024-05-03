@@ -5,6 +5,16 @@ from nextline import Nextline
 
 from nextline_schedule.auto import AutoModeStateMachine, AutoMode
 
+STATEMENT_QUEUE = '''
+"""queue"""
+import time
+time.sleep(0.01)
+'''
+
+
+async def mock_queue() -> str:
+    return STATEMENT_QUEUE
+
 
 class MockError(Exception):
     pass
@@ -25,7 +35,7 @@ async def test_on_raised_while_pulling():
 
     run_no = 1
     nextline = Nextline(statement=f, run_no_start_from=run_no, timeout_on_exit=60)
-    auto_mode = AutoMode(nextline=nextline, scheduler=pull)
+    auto_mode = AutoMode(nextline=nextline, scheduler=pull, queue=mock_queue)
 
     states = asyncio.create_task(subscribe_state(auto_mode))
 
@@ -41,12 +51,12 @@ async def test_on_raised_while_pulling():
 
 
 async def test_on_raised_while_running():
-    async def request_statement():
+    async def pull():
         return g
 
     run_no = 1
     nextline = Nextline(statement=f, run_no_start_from=run_no, timeout_on_exit=60)
-    auto_mode = AutoMode(nextline=nextline, scheduler=request_statement)
+    auto_mode = AutoMode(nextline=nextline, scheduler=pull, queue=mock_queue)
 
     states = asyncio.create_task(subscribe_state(auto_mode))
 

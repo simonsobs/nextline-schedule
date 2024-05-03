@@ -53,6 +53,7 @@ class Plugin:
         self._scheduler = RequestStatement(
             api_url=api_rul, length_minutes=length_minutes, policy=policy
         )
+        # self._scheduler = self._dummy
 
     @spec.hookimpl
     def schema(self):
@@ -63,9 +64,9 @@ class Plugin:
     async def lifespan(self, context: Mapping):
         nextline = context['nextline']
         self._queue = PubSubQueue()
-        pull_func = self._scheduler
-        # pull_func = self._dummy
-        self._auto_mode = AutoMode(nextline=nextline, scheduler=pull_func)
+        self._auto_mode = AutoMode(
+            nextline=nextline, scheduler=self._scheduler, queue=self._queue
+        )
         async with self._queue, self._auto_mode as y:
             yield y
 

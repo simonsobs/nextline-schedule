@@ -4,27 +4,37 @@ from nextline import Nextline
 
 from nextline_schedule.auto import AutoMode
 
-STATEMENT = '''
+STATEMENT_SCHEDULER = '''
 """run_no: {run_no}"""
 import time
 time.sleep(0.01)
 '''
 
+STATEMENT_QUEUE = '''
+"""queue"""
+import time
+time.sleep(0.01)
+'''
 
-class RequestStatement:
+
+class MockScheduler:
     def __init__(self, nextline: Nextline):
         self._nextline = nextline
 
     async def __call__(self) -> str:
-        return STATEMENT.format(run_no=self._nextline.run_no + 1)
+        return STATEMENT_SCHEDULER.format(run_no=self._nextline.run_no + 1)
+
+
+async def mock_queue() -> str:
+    return STATEMENT_QUEUE
 
 
 async def test_one() -> None:
     run_no = 1
-    statement = STATEMENT.format(run_no=run_no)
+    statement = STATEMENT_SCHEDULER.format(run_no=run_no)
     nextline = Nextline(statement=statement, run_no_start_from=run_no)
-    pull = RequestStatement(nextline=nextline)
-    auto_mode = AutoMode(nextline=nextline, scheduler=pull)
+    scheduler = MockScheduler(nextline=nextline)
+    auto_mode = AutoMode(nextline=nextline, scheduler=scheduler, queue=mock_queue)
 
     states = asyncio.create_task(subscribe_state(auto_mode))
 
