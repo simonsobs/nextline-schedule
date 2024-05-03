@@ -2,13 +2,18 @@ from collections.abc import AsyncIterator
 
 from nextline import Nextline
 
+from nextline_schedule.types import Statement
+
 from .callback import build_state_machine
 from .types import PullFunc
 
 
 class AutoMode:
     def __init__(self, nextline: Nextline, pull_func: PullFunc):
-        self._machine = build_state_machine(nextline=nextline, pull_func=pull_func)
+        self._pull_from = PullFrom(scheduler=pull_func)
+        self._machine = build_state_machine(
+            nextline=nextline, pull_func=self._pull_from
+        )
 
     @property
     def state(self) -> str:
@@ -29,3 +34,12 @@ class AutoMode:
 
     async def __aexit__(self, exc_type, exc_value, traceback) -> None:
         await self._machine.__aexit__(exc_type, exc_value, traceback)
+
+
+class PullFrom:
+    def __init__(self, scheduler: PullFunc):
+        self._scheduler = scheduler
+        self._pull = self._scheduler
+
+    async def __call__(self) -> Statement:
+        return await self._pull()
