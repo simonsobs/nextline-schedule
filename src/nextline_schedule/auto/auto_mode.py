@@ -13,7 +13,7 @@ class AutoMode:
     def __init__(self, nextline: Nextline, scheduler: PullFunc, queue: PullFunc):
         self._pull_from = PullFrom(scheduler=scheduler, queue=queue)
         self._machine = build_state_machine(
-            nextline=nextline, pull_func=self._pull_from
+            nextline=nextline, pull_from=self._pull_from
         )
 
     @property
