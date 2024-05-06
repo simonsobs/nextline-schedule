@@ -25,7 +25,7 @@ async def mutate_turn_off(info: Info) -> bool:
 
 
 @strawberry.type
-class MutationAutoMode:
+class MutationScheduleAutoMode:
     turn_on: bool = strawberry.field(resolver=mutate_turn_on)
     turn_off: bool = strawberry.field(resolver=mutate_turn_off)
 
@@ -64,8 +64,8 @@ async def mutate_load_script(info: Info) -> bool:
 @strawberry.type
 class MutationSchedule:
     @strawberry.field
-    def auto_mode(self, info: Info) -> MutationAutoMode:
-        return MutationAutoMode()
+    def auto_mode(self, info: Info) -> MutationScheduleAutoMode:
+        return MutationScheduleAutoMode()
 
     @strawberry.field
     def scheduler(self, info: Info) -> MutationScheduler:
