@@ -12,9 +12,8 @@ if TYPE_CHECKING:
 
 
 def build_state_machine(
-    nextline: Nextline, pull_from: 'PullFrom'
+    nextline: Nextline, callback: 'Callback'
 ) -> AutoModeStateMachine:
-    callback = Callback(nextline=nextline, pull_from=pull_from)
     machine = AutoModeStateMachine(callback=callback)
     callback.machine = machine
     plugin = ScheduleAutoMode(machine=machine)

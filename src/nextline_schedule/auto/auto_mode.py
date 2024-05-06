@@ -5,16 +5,15 @@ from nextline import Nextline
 
 from nextline_schedule.types import Statement
 
-from .callback import build_state_machine
+from .callback import Callback, build_state_machine
 from .types import PullFunc
 
 
 class AutoMode:
     def __init__(self, nextline: Nextline, scheduler: PullFunc, queue: PullFunc):
         self._pull_from = PullFrom(scheduler=scheduler, queue=queue)
-        self._machine = build_state_machine(
-            nextline=nextline, pull_from=self._pull_from
-        )
+        callback = Callback(nextline=nextline, pull_from=self._pull_from)
+        self._machine = build_state_machine(nextline=nextline, callback=callback)
 
     @property
     def state(self) -> str:
