@@ -1,4 +1,5 @@
 import asyncio
+from collections.abc import Awaitable, Callable
 from logging import getLogger
 
 from nextline import Nextline
@@ -41,11 +42,20 @@ class ScheduleAutoMode:
 
 
 class Callback:
-    def __init__(self, nextline: Nextline, pull_func: PullFunc):
+    def __init__(
+        self,
+        nextline: Nextline,
+        pull_func: PullFunc,
+        on_state_changed: Callable[[str], Awaitable[None]],
+    ):
         self._nextline = nextline
         self._pull = pull_func
+        self._on_state_changed = on_state_changed
         self._logger = getLogger(__name__)
         self.machine: AutoModeStateMachine  # to be set
+
+    async def on_state_changed(self, state: str) -> None:
+        await self._on_state_changed(state)
 
     async def wait(self) -> None:
         match self._nextline.state:

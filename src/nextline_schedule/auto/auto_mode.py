@@ -12,7 +12,11 @@ from .types import PullFunc
 class AutoMode:
     def __init__(self, nextline: Nextline, scheduler: PullFunc, queue: PullFunc):
         self._pull_from = PullFrom(scheduler=scheduler, queue=queue)
-        callback = Callback(nextline=nextline, pull_func=self._pull_from)
+        callback = Callback(
+            nextline=nextline,
+            pull_func=self._pull_from,
+            on_state_changed=self.on_state_changed,
+        )
         self._machine = build_state_machine(nextline=nextline, callback=callback)
 
     @property
@@ -34,6 +38,9 @@ class AutoMode:
 
     async def __aexit__(self, exc_type, exc_value, traceback) -> None:
         await self._machine.__aexit__(exc_type, exc_value, traceback)
+
+    async def on_state_changed(self, state: str) -> None:
+        pass
 
 
 @dataclasses.dataclass
