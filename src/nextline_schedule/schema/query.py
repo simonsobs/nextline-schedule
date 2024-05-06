@@ -15,7 +15,7 @@ def query_auto_mode_state(info: Info) -> str:
 
 
 @strawberry.type
-class QueryAutoMode:
+class QueryScheduleAutoMode:
     state: str = strawberry.field(resolver=query_auto_mode_state)
 
 
@@ -49,8 +49,8 @@ class QuerySchedule:
     version: str = __version__
 
     @strawberry.field
-    def auto_mode(self, info: Info) -> QueryAutoMode:
-        return QueryAutoMode()
+    def auto_mode(self, info: Info) -> QueryScheduleAutoMode:
+        return QueryScheduleAutoMode()
 
     @strawberry.field
     def scheduler(self, info: Info) -> QueryScheduler:
