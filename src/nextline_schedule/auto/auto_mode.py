@@ -1,3 +1,4 @@
+import dataclasses
 from collections.abc import AsyncIterator
 
 from nextline import Nextline
@@ -36,11 +37,17 @@ class AutoMode:
         await self._machine.__aexit__(exc_type, exc_value, traceback)
 
 
+@dataclasses.dataclass
+class PullFromItem:
+    name: str
+    pull: PullFunc
+
+
 class PullFrom:
     def __init__(self, scheduler: PullFunc, queue: PullFunc):
-        self._scheduler = scheduler
-        self._queue = queue
-        self._pull = self._scheduler
+        self._scheduler = PullFromItem(name='scheduler', pull=scheduler)
+        self._queue = PullFromItem(name='queue', pull=queue)
+        self._current = self._scheduler
 
     async def __call__(self) -> Statement:
-        return await self._pull()
+        return await self._current.pull()
