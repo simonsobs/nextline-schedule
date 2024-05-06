@@ -1,14 +1,11 @@
 import asyncio
 from logging import getLogger
-from typing import TYPE_CHECKING
 
 from nextline import Nextline
 from nextline.plugin.spec import Context, hookimpl
 
 from .state_machine.machine import AutoModeStateMachine
-
-if TYPE_CHECKING:
-    from .auto_mode import PullFrom
+from .types import PullFunc
 
 
 def build_state_machine(
@@ -44,9 +41,9 @@ class ScheduleAutoMode:
 
 
 class Callback:
-    def __init__(self, nextline: Nextline, pull_from: 'PullFrom'):
+    def __init__(self, nextline: Nextline, pull_func: PullFunc):
         self._nextline = nextline
-        self._pull = pull_from
+        self._pull = pull_func
         self._logger = getLogger(__name__)
         self.machine: AutoModeStateMachine  # to be set
 
