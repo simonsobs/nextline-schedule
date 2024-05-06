@@ -39,7 +39,7 @@ class AutoMode:
     def mode(self) -> ModeName:
         return self._mode
 
-    async def subscribe_mode(self) -> AsyncIterator[ModeName]:
+    def subscribe_mode(self) -> AsyncIterator[ModeName]:
         return self._pubsub_mode.subscribe()
 
     async def change_mode(self, mode: ModeName) -> None:
