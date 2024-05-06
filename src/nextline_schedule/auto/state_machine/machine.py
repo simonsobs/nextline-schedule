@@ -9,6 +9,9 @@ from .factory import build_state_machine
 
 
 class CallbackType(Protocol):
+    async def on_state_changed(self, state: str) -> None:
+        ...
+
     async def wait(self) -> None:
         ...
 
@@ -59,6 +62,7 @@ class AutoModeStateMachine:
 
     async def after_state_change(self) -> None:
         await self._collect_tasks()
+        await self._callback.on_state_changed(self.state)
         await self._pubsub_state.publish(self.state)
 
     async def cancel_task(self) -> None:
