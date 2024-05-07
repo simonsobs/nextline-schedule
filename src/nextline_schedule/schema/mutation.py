@@ -33,10 +33,12 @@ class MutationScheduler:
 
 
 async def mutate_load_script(info: Info) -> bool:
-    nextline: Nextline = info.context["nextline"]
+    nextline = info.context["nextline"]
+    assert isinstance(nextline, Nextline)
     scheduler = info.context['schedule']['scheduler']
-    assert isinstance(scheduler, RequestStatement)
+    assert callable(scheduler)
     statement = await scheduler()
+    assert isinstance(statement, str)
     await nextline.reset(statement=statement)
     return True
 
