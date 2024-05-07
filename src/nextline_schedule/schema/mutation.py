@@ -6,23 +6,8 @@ from strawberry.types import Info
 
 from nextline_schedule.scheduler import RequestStatement
 
-
-async def mutate_turn_on(info: Info) -> bool:
-    auto_mode = info.context["auto_mode"]
-    await auto_mode.turn_on()
-    return True
-
-
-async def mutate_turn_off(info: Info) -> bool:
-    auto_mode = info.context["auto_mode"]
-    await auto_mode.turn_off()
-    return True
-
-
-@strawberry.type
-class MutationAutoMode:
-    turn_on: bool = strawberry.field(resolver=mutate_turn_on)
-    turn_off: bool = strawberry.field(resolver=mutate_turn_off)
+from .auto import MutationScheduleAutoMode
+from .queue import MutationScheduleQueue
 
 
 @strawberry.input
@@ -36,7 +21,8 @@ class MutationSchedulerInput:
 class MutationScheduler:
     @strawberry.mutation
     def update(self, info: Info, input: MutationSchedulerInput) -> bool:
-        scheduler = info.context["scheduler"]
+        scheduler = info.context['schedule']['scheduler']
+        assert isinstance(scheduler, RequestStatement)
         if input.api_url is not None:
             scheduler._api_url = input.api_url
         if input.length_minutes is not None:
@@ -47,9 +33,12 @@ class MutationScheduler:
 
 
 async def mutate_load_script(info: Info) -> bool:
-    nextline: Nextline = info.context["nextline"]
-    scheduler: RequestStatement = info.context["scheduler"]
+    nextline = info.context["nextline"]
+    assert isinstance(nextline, Nextline)
+    scheduler = info.context['schedule']['scheduler']
+    assert callable(scheduler)
     statement = await scheduler()
+    assert isinstance(statement, str)
     await nextline.reset(statement=statement)
     return True
 
@@ -57,8 +46,8 @@ async def mutate_load_script(info: Info) -> bool:
 @strawberry.type
 class MutationSchedule:
     @strawberry.field
-    def auto_mode(self, info: Info) -> MutationAutoMode:
-        return MutationAutoMode()
+    def auto_mode(self, info: Info) -> MutationScheduleAutoMode:
+        return MutationScheduleAutoMode()
 
     @strawberry.field
     def scheduler(self, info: Info) -> MutationScheduler:
@@ -67,6 +56,10 @@ class MutationSchedule:
     @strawberry.mutation
     async def load_script(self, info: Info) -> bool:
         return await mutate_load_script(info)
+
+    @strawberry.field
+    def queue(self) -> MutationScheduleQueue:
+        return MutationScheduleQueue()
 
 
 @strawberry.type

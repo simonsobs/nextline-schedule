@@ -1,31 +1,28 @@
 import strawberry
 from strawberry.types import Info
 
-import nextline_schedule
+from nextline_schedule import __version__
+from nextline_schedule.scheduler import RequestStatement
 
-
-def query_auto_mode_state(info: Info) -> str:
-    auto_mode = info.context["auto_mode"]
-    return auto_mode.state
-
-
-@strawberry.type
-class QueryAutoMode:
-    state: str = strawberry.field(resolver=query_auto_mode_state)
+from .auto import QueryScheduleAutoMode
+from .queue import QueryScheduleQueue
 
 
 def query_scheduler_api_url(info: Info) -> str:
-    scheduler = info.context["scheduler"]
+    scheduler = info.context['schedule']['scheduler']
+    assert isinstance(scheduler, RequestStatement)
     return scheduler._api_url
 
 
 def query_scheduler_length_minutes(info: Info) -> int:
-    scheduler = info.context["scheduler"]
+    scheduler = info.context['schedule']['scheduler']
+    assert isinstance(scheduler, RequestStatement)
     return scheduler._length_minutes
 
 
 def query_scheduler_policy(info: Info) -> str:
-    scheduler = info.context["scheduler"]
+    scheduler = info.context['schedule']['scheduler']
+    assert isinstance(scheduler, RequestStatement)
     return scheduler._policy
 
 
@@ -38,15 +35,19 @@ class QueryScheduler:
 
 @strawberry.type
 class QuerySchedule:
-    version: str = nextline_schedule.__version__
+    version: str = __version__
 
     @strawberry.field
-    def auto_mode(self, info: Info) -> QueryAutoMode:
-        return QueryAutoMode()
+    def auto_mode(self, info: Info) -> QueryScheduleAutoMode:
+        return QueryScheduleAutoMode()
 
     @strawberry.field
     def scheduler(self, info: Info) -> QueryScheduler:
         return QueryScheduler()
+
+    @strawberry.field
+    def queue(self) -> QueryScheduleQueue:
+        return QueryScheduleQueue()
 
 
 @strawberry.type

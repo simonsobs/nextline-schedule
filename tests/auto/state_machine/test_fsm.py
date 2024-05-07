@@ -8,7 +8,7 @@ from hypothesis import strategies as st
 from transitions import Machine
 from transitions.extensions.markup import HierarchicalMarkupMachine
 
-from nextline_schedule.auto.factory import build_state_machine
+from nextline_schedule.auto.state_machine.factory import build_state_machine
 
 
 def test_model_default():

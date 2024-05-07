@@ -1,7 +1,7 @@
 __all__ = [
-    'build_auto_mode_state_machine',
+    'AutoMode',
     'AutoModeStateMachine',
 ]
 
-from .callback import build_auto_mode_state_machine
-from .machine import AutoModeStateMachine
+from .auto_mode import AutoMode
+from .state_machine import AutoModeStateMachine

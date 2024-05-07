@@ -8,8 +8,10 @@ from dynaconf import Dynaconf, Validator
 from nextlinegraphql.hook import spec
 
 from .__about__ import __version__
-from .auto import build_auto_mode_state_machine
-from .scheduler import DummyRequestStatement, RequestStatement
+from .auto import AutoMode
+from .dummy import DummyRequestStatement
+from .queue import PubSubQueue
+from .scheduler import RequestStatement
 from .schema import Mutation, Query, Subscription
 
 HERE = Path(__file__).resolve().parent
@@ -47,9 +49,11 @@ class Plugin:
         length_minutes = settings.schedule.length_minutes
         policy = settings.schedule.policy
 
-        self._request_statement = RequestStatement(
+        self._dummy = DummyRequestStatement()
+        self._scheduler = RequestStatement(
             api_url=api_rul, length_minutes=length_minutes, policy=policy
         )
+        # self._scheduler = self._dummy
 
     @spec.hookimpl
     def schema(self):
@@ -59,13 +63,18 @@ class Plugin:
     @asynccontextmanager
     async def lifespan(self, context: Mapping):
         nextline = context['nextline']
-        self._auto_mode = build_auto_mode_state_machine(
-            nextline=nextline, request_statement=self._request_statement
+        self._queue = PubSubQueue()
+        self._auto_mode = AutoMode(
+            nextline=nextline, scheduler=self._scheduler, queue=self._queue
         )
-        async with self._auto_mode as y:
+        async with self._queue, self._auto_mode as y:
             yield y
 
     @spec.hookimpl
     def update_strawberry_context(self, context: MutableMapping) -> None:
-        context['auto_mode'] = self._auto_mode
-        context['scheduler'] = self._request_statement
+        schedule = {
+            'auto_mode': self._auto_mode,
+            'scheduler': self._scheduler,
+            'queue': self._queue,
+        }
+        context['schedule'] = schedule

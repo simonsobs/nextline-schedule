@@ -3,14 +3,24 @@ import time
 
 from nextline import Nextline
 
-from nextline_schedule.auto import AutoModeStateMachine, build_auto_mode_state_machine
+from nextline_schedule.auto import AutoMode, AutoModeStateMachine
+
+STATEMENT_QUEUE = '''
+"""queue"""
+import time
+time.sleep(0.01)
+'''
+
+
+async def mock_queue() -> str:
+    return STATEMENT_QUEUE
 
 
 def f():
     time.sleep(0.001)
 
 
-async def request_statement():
+async def pull():
     return f
 
 
@@ -23,9 +33,7 @@ async def test_turn_off_while_waiting():
         trace_modules=True,
         timeout_on_exit=60,
     )
-    auto_mode = build_auto_mode_state_machine(
-        nextline=nextline, request_statement=request_statement
-    )
+    auto_mode = AutoMode(nextline=nextline, scheduler=pull, queue=mock_queue)
 
     states = asyncio.create_task(subscribe_state(auto_mode))
 

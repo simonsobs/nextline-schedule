@@ -1,7 +1,7 @@
 import asyncio
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Callable
 from logging import getLogger
-from typing import Protocol
+from typing import Any, Protocol
 
 from nextline.utils import pubsub
 
@@ -9,6 +9,9 @@ from .factory import build_state_machine
 
 
 class CallbackType(Protocol):
+    async def on_state_changed(self, state: str) -> None:
+        ...
+
     async def wait(self) -> None:
         ...
 
@@ -27,8 +30,15 @@ class AutoModeStateMachine:
         self._tasks = set[asyncio.Task]()
         self._pubsub_state = pubsub.PubSubItem[str]()
         self._logger = getLogger(__name__)
+
         machine = build_state_machine(model=self)
-        machine.after_state_change = self.after_state_change.__name__  # type: ignore
+        machine.after_state_change = [self.after_state_change.__name__]
+
+        self.state: str  # attached by machine
+        self.start: Callable[..., Any]  # attached by machine
+
+        assert isinstance(self.state, str)
+        assert callable(self.start)
 
     def subscribe_state(self) -> AsyncIterator[str]:
         return self._pubsub_state.subscribe()
@@ -52,7 +62,8 @@ class AutoModeStateMachine:
 
     async def after_state_change(self) -> None:
         await self._collect_tasks()
-        await self._pubsub_state.publish(self.state)  # type: ignore
+        await self._callback.on_state_changed(self.state)
+        await self._pubsub_state.publish(self.state)
 
     async def cancel_task(self) -> None:
         self._task.cancel()
@@ -75,7 +86,7 @@ class AutoModeStateMachine:
         await self._pubsub_state.close()
 
     async def __aenter__(self) -> 'AutoModeStateMachine':
-        await self.start()  # type: ignore
+        await self.start()
         return self
 
     async def __aexit__(self, exc_type, exc_value, traceback) -> None:
