@@ -2,7 +2,8 @@ from typing import Optional, Protocol, TypeVar
 
 from graphql import GRAPHQL_MAX_INT, GRAPHQL_MIN_INT
 from hypothesis import strategies as st
-from nextline_rdb.utils import safe_max, safe_min
+
+from nextline_schedule.utils import safe_max, safe_min
 
 T = TypeVar('T')
 
