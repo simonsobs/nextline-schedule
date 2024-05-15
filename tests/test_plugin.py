@@ -48,7 +48,7 @@ async def test_plugin(client: TestClient):
 
     n_runs = 0
     async for data in gql_subscribe(client, SUBSCRIBE_STATE):
-        if data['state'] == 'running':
+        if data['ctrlState'] == 'running':
             turned_on.set()
             n_runs += 1
         if n_runs >= 3:
@@ -56,7 +56,7 @@ async def test_plugin(client: TestClient):
             break
 
     async for data in gql_subscribe(client, SUBSCRIBE_STATE):
-        if data['state'] == 'finished':
+        if data['ctrlState'] == 'finished':
             break
 
     await task
