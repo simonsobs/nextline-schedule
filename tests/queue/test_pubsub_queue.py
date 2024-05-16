@@ -17,14 +17,14 @@ async def test_pubsub_queue(data: st.DataObject):
     task = asyncio.create_task(subscribe())
     await asyncio.sleep(0)
 
-    methods = ['push', 'pop', 'remove', 'break']
-    cmds = data.draw(st.lists(st.sampled_from(methods), min_size=0, max_size=10))
+    METHODS = ['push', 'pop', 'remove', 'break']
+    methods = data.draw(st.lists(st.sampled_from(METHODS), min_size=0, max_size=10))
 
     async with queue:
         expected = [list(queue.items)]
-        for cmd in cmds:
+        for method in methods:
             await asyncio.sleep(0)
-            match cmd:
+            match method:
                 case 'push':
                     arg = data.draw(st_push_arg())
                     await queue.push(arg)
@@ -41,9 +41,21 @@ async def test_pubsub_queue(data: st.DataObject):
                         continue
                 case 'break':
                     break
+                case _:  # pragma: no cover
+                    raise ValueError(f'Invalid method: {method!r}')
             expected.append(list(queue.items))
 
     await asyncio.sleep(0)
 
     actual = await task
     assert actual == expected
+
+    # Cancel extra tasks. For unknown reasons, the task created by
+    # `queue.subscribe()` in the `subscribe` function is sometimes still running.
+    extra_tasks = [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]
+    for t in extra_tasks:  # pragma: no cover
+        t.cancel()
+        try:
+            await t
+        except asyncio.CancelledError:
+            pass
