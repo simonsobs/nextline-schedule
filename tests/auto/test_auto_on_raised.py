@@ -3,7 +3,7 @@ import time
 
 from nextline import Nextline
 
-from nextline_schedule.auto import AutoModeStateMachine, AutoMode
+from nextline_schedule.auto import AutoMode, AutoModeStateMachine
 
 STATEMENT_QUEUE = '''
 """queue"""

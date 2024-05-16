@@ -4,7 +4,7 @@ from hypothesis import given
 from hypothesis import strategies as st
 
 from nextline_schedule.queue import QueueEmpty, QueueItem
-from nextline_schedule.queue.strategies import st_queue, st_push_arg
+from nextline_schedule.queue.strategies import st_push_arg, st_queue
 
 
 @given(st.data())
