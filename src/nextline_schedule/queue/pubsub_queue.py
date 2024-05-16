@@ -4,7 +4,8 @@ from typing import Optional
 
 from nextline.utils import pubsub
 
-from .queue_imp import PushArg, QueueImp, QueueItem
+from .item import PushArg, QueueItem
+from .queue_imp import QueueImp
 
 
 class QueueEmpty(Exception):

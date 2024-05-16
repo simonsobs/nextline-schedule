@@ -1,31 +1,9 @@
-import dataclasses
 import itertools
 from collections import deque
 from collections.abc import Iterable
-from datetime import datetime
 from typing import Optional
 
-
-@dataclasses.dataclass
-class QueueItem:
-    id: int
-    name: str
-    created_at: datetime
-    script: str
-
-
-@dataclasses.dataclass
-class PushArg:
-    name: str
-    script: str
-
-    def to_queue_item(self, id: int) -> QueueItem:
-        return QueueItem(
-            id=id,
-            name=self.name,
-            created_at=datetime.utcnow(),
-            script=self.script,
-        )
+from .item import PushArg, QueueItem
 
 
 class QueueImp:
