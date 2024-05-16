@@ -21,7 +21,7 @@ async def test_pubsub_queue(data: st.DataObject):
     methods = data.draw(st.lists(st.sampled_from(METHODS), min_size=0, max_size=10))
 
     async with queue:
-        expected = [list(queue.items)]
+        expected = [queue.items]
         for method in methods:
             await asyncio.sleep(0)
             match method:

@@ -26,7 +26,7 @@ class PubSubQueue:
 
     @property
     def items(self):
-        return self._queue.items
+        return self._pubsub.latest()
 
     def subscribe(self) -> AsyncIterator[list[QueueItem]]:
         return self._pubsub.subscribe()
