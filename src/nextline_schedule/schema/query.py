@@ -2,7 +2,7 @@ import strawberry
 from strawberry.types import Info
 
 from nextline_schedule import __version__
-from nextline_schedule.scheduler import RequestStatement
+from nextline_schedule.scheduler import Scheduler
 
 from .auto import QueryScheduleAutoMode
 from .queue import QueryScheduleQueue
@@ -10,19 +10,19 @@ from .queue import QueryScheduleQueue
 
 def query_scheduler_api_url(info: Info) -> str:
     scheduler = info.context['schedule']['scheduler']
-    assert isinstance(scheduler, RequestStatement)
+    assert isinstance(scheduler, Scheduler)
     return scheduler._api_url
 
 
 def query_scheduler_length_minutes(info: Info) -> int:
     scheduler = info.context['schedule']['scheduler']
-    assert isinstance(scheduler, RequestStatement)
+    assert isinstance(scheduler, Scheduler)
     return scheduler._length_minutes
 
 
 def query_scheduler_policy(info: Info) -> str:
     scheduler = info.context['schedule']['scheduler']
-    assert isinstance(scheduler, RequestStatement)
+    assert isinstance(scheduler, Scheduler)
     return scheduler._policy
 
 

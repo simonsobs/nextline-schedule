@@ -4,7 +4,7 @@ import strawberry
 from nextline import Nextline
 from strawberry.types import Info
 
-from nextline_schedule.scheduler import RequestStatement
+from nextline_schedule.scheduler import Scheduler
 
 from .auto import MutationScheduleAutoMode
 from .queue import MutationScheduleQueue
@@ -22,7 +22,7 @@ class MutationScheduler:
     @strawberry.mutation
     def update(self, info: Info, input: MutationSchedulerInput) -> bool:
         scheduler = info.context['schedule']['scheduler']
-        assert isinstance(scheduler, RequestStatement)
+        assert isinstance(scheduler, Scheduler)
         if input.api_url is not None:
             scheduler._api_url = input.api_url
         if input.length_minutes is not None:

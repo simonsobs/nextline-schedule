@@ -11,7 +11,7 @@ from .__about__ import __version__
 from .auto import AutoMode
 from .dummy import DummyRequestStatement
 from .queue import PubSubQueue
-from .scheduler import RequestStatement
+from .scheduler import Scheduler
 from .schema import Mutation, Query, Subscription
 
 HERE = Path(__file__).resolve().parent
@@ -50,7 +50,7 @@ class Plugin:
         policy = settings.schedule.policy
 
         self._dummy = DummyRequestStatement()
-        self._scheduler = RequestStatement(
+        self._scheduler = Scheduler(
             api_url=api_rul, length_minutes=length_minutes, policy=policy
         )
         # self._scheduler = self._dummy

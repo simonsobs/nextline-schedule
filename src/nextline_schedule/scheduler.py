@@ -4,7 +4,7 @@ from logging import getLogger
 import httpx
 
 
-class RequestStatement:
+class Scheduler:
     def __init__(self, api_url: str, length_minutes: int, policy: str, timeout=5.0):
         self._api_url = api_url
         self._length_minutes = length_minutes
