@@ -4,7 +4,7 @@ from typing import Optional
 
 from nextline.utils import pubsub
 
-from .queue import PushArg, Queue, QueueItem
+from .queue_imp import PushArg, QueueImp, QueueItem
 
 
 class QueueEmpty(Exception):
@@ -14,7 +14,7 @@ class QueueEmpty(Exception):
 class PubSubQueue:
     def __init__(self, items: Optional[Iterable[QueueItem]] = None):
         self._pubsub = pubsub.PubSubItem[list[QueueItem]]()
-        self._queue = Queue(items)
+        self._queue = QueueImp(items)
         self._logger = getLogger(__name__)
 
     async def __call__(self) -> str:

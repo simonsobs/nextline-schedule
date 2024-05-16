@@ -28,7 +28,7 @@ class PushArg:
         )
 
 
-class Queue:
+class QueueImp:
     def __init__(self, items: Optional[Iterable[QueueItem]] = None):
         items = list(items or [])
         id_start = max(i.id for i in items) + 1 if items else 0
