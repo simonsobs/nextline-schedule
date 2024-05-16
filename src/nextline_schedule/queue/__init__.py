@@ -1,11 +1,11 @@
 __all__ = [
     'PushArg',
     'QueueItem',
-    'PubSubQueue',
+    'Queue',
     'QueueEmpty',
     'QueueImp',
 ]
 
 from .item import PushArg, QueueItem
-from .pubsub_queue import PubSubQueue, QueueEmpty
+from .queue import Queue, QueueEmpty
 from .queue_imp import QueueImp

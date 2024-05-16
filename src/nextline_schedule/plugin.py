@@ -10,7 +10,7 @@ from nextlinegraphql.hook import spec
 from .__about__ import __version__
 from .auto import AutoMode
 from .dummy import DummyRequestStatement
-from .queue import PubSubQueue
+from .queue import Queue
 from .scheduler import Scheduler
 from .schema import Mutation, Query, Subscription
 
@@ -63,7 +63,7 @@ class Plugin:
     @asynccontextmanager
     async def lifespan(self, context: Mapping):
         nextline = context['nextline']
-        self._queue = PubSubQueue()
+        self._queue = Queue()
         self._auto_mode = AutoMode(
             nextline=nextline, scheduler=self._scheduler, queue=self._queue
         )

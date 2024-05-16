@@ -5,7 +5,7 @@ from hypothesis import strategies as st
 from nextline_schedule.utils.strategies import st_datetimes, st_python_scripts
 
 from .item import PushArg, QueueItem
-from .pubsub_queue import PubSubQueue
+from .queue import Queue
 from .queue_imp import QueueImp
 
 
@@ -44,10 +44,10 @@ def st_queue_imp(
     )
 
 
-def st_pubsub_queue(
+def st_queue(
     min_items_size: int = 0, max_items_size: int = 5
-) -> st.SearchStrategy[PubSubQueue]:
+) -> st.SearchStrategy[Queue]:
     return st.builds(
-        PubSubQueue,
+        Queue,
         items=st_queue_item_list(min_size=min_items_size, max_size=max_items_size),
     )

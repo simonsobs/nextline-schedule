@@ -12,7 +12,7 @@ class QueueEmpty(Exception):
     pass
 
 
-class PubSubQueue:
+class Queue:
     def __init__(self, items: Optional[Iterable[QueueItem]] = None):
         self._pubsub = pubsub.PubSubItem[list[QueueItem]]()
         self._queue = QueueImp(items)
@@ -56,7 +56,7 @@ class PubSubQueue:
     async def aclose(self) -> None:
         await self._pubsub.close()
 
-    async def __aenter__(self) -> 'PubSubQueue':
+    async def __aenter__(self) -> 'Queue':
         await self._pubsub.publish(list(self._queue.items))
         return self
 

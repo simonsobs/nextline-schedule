@@ -2,13 +2,13 @@ import strawberry
 from hypothesis import given
 
 from nextline_schedule.graphql import QUERY_SCHEDULE_QUEUE_ITEMS
-from nextline_schedule.queue import PubSubQueue
-from nextline_schedule.queue.strategies import st_pubsub_queue
+from nextline_schedule.queue import Queue
+from nextline_schedule.queue.strategies import st_queue
 from nextline_schedule.schema import Query
 
 
-@given(queue=st_pubsub_queue())
-async def test_query(queue: PubSubQueue):
+@given(queue=st_queue())
+async def test_query(queue: Queue):
     async with queue:
         context_schedule = {'queue': queue}
         context = {'schedule': context_schedule}

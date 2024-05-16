@@ -4,12 +4,12 @@ from hypothesis import given
 from hypothesis import strategies as st
 
 from nextline_schedule.queue import QueueEmpty, QueueItem
-from nextline_schedule.queue.strategies import st_pubsub_queue, st_push_arg
+from nextline_schedule.queue.strategies import st_queue, st_push_arg
 
 
 @given(st.data())
-async def test_pubsub_queue(data: st.DataObject):
-    queue = data.draw(st_pubsub_queue())
+async def test_queue(data: st.DataObject):
+    queue = data.draw(st_queue())
 
     async def subscribe() -> list[list[QueueItem]]:
         return [i async for i in queue.subscribe()]
