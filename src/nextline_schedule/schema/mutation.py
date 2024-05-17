@@ -46,11 +46,11 @@ async def mutate_load_script(info: Info) -> bool:
 @strawberry.type
 class MutationSchedule:
     @strawberry.field
-    def auto_mode(self, info: Info) -> MutationScheduleAutoMode:
+    def auto_mode(self) -> MutationScheduleAutoMode:
         return MutationScheduleAutoMode()
 
     @strawberry.field
-    def scheduler(self, info: Info) -> MutationScheduler:
+    def scheduler(self) -> MutationScheduler:
         return MutationScheduler()
 
     @strawberry.mutation
@@ -65,5 +65,5 @@ class MutationSchedule:
 @strawberry.type
 class Mutation:
     @strawberry.field
-    def schedule(self, info: Info) -> MutationSchedule:
+    def schedule(self) -> MutationSchedule:
         return MutationSchedule()
