@@ -41,7 +41,7 @@ def mutate_update(info: Info, input: MutationSchedulerInput) -> bool:
 
 
 @strawberry.type
-class MutationScheduler:
+class MutationScheduleScheduler:
     update: bool = strawberry.mutation(resolver=mutate_update)
     load_script: bool = strawberry.mutation(resolver=mutate_load_script)
 
@@ -53,8 +53,8 @@ class MutationSchedule:
         return MutationScheduleAutoMode()
 
     @strawberry.field
-    def scheduler(self) -> MutationScheduler:
-        return MutationScheduler()
+    def scheduler(self) -> MutationScheduleScheduler:
+        return MutationScheduleScheduler()
 
     @strawberry.mutation
     async def load_script(self, info: Info) -> bool:
