@@ -27,7 +27,7 @@ def query_scheduler_policy(info: Info) -> str:
 
 
 @strawberry.type
-class QueryScheduler:
+class QueryScheduleScheduler:
     api_url: str = strawberry.field(resolver=query_scheduler_api_url)
     length_minutes: int = strawberry.field(resolver=query_scheduler_length_minutes)
     policy: str = strawberry.field(resolver=query_scheduler_policy)
@@ -42,8 +42,8 @@ class QuerySchedule:
         return QueryScheduleAutoMode()
 
     @strawberry.field
-    def scheduler(self) -> QueryScheduler:
-        return QueryScheduler()
+    def scheduler(self) -> QueryScheduleScheduler:
+        return QueryScheduleScheduler()
 
     @strawberry.field
     def queue(self) -> QueryScheduleQueue:
