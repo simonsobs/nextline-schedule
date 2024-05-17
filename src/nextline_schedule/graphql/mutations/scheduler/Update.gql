@@ -1,0 +1,7 @@
+mutation ScheduleSchedulerUpdate($input: MutationSchedulerUpdateInput!) {
+  schedule {
+    scheduler {
+      update(input: $input)
+    }
+  }
+}

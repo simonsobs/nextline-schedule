@@ -1,19 +1,10 @@
 import asyncio
-import sys
-from collections.abc import AsyncIterable, AsyncIterator, Iterable
+from collections.abc import AsyncIterator, Iterable
 from typing import TypeVar
 
 import pytest
 
 T = TypeVar('T')
-
-if not sys.version_info >= (3, 10):
-    # https://github.com/python/typeshed/blob/main/stdlib/builtins.pyi
-    def aiter(async_iterable: AsyncIterable[T]) -> AsyncIterator[T]:
-        return async_iterable.__aiter__()
-
-    async def anext(async_iterator: AsyncIterator[T]) -> T:
-        return await async_iterator.__anext__()
 
 
 async def aiterable(iterable: Iterable[T]) -> AsyncIterator[T]:

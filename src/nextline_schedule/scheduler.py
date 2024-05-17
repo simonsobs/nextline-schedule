@@ -1,10 +1,10 @@
-from datetime import datetime, timedelta
+import datetime
 from logging import getLogger
 
 import httpx
 
 
-class RequestStatement:
+class Scheduler:
     def __init__(self, api_url: str, length_minutes: int, policy: str, timeout=5.0):
         self._api_url = api_url
         self._length_minutes = length_minutes
@@ -13,9 +13,9 @@ class RequestStatement:
         self._logger = getLogger(__name__)
 
     async def __call__(self) -> str:
-        # https://github.com/simonsobs/so-scheduler/blob/master/readme.md#schedule-api
-        start_time = datetime.utcnow()
-        duration = timedelta(minutes=self._length_minutes)
+        # https://github.com/simonsobs/scheduler-server?tab=readme-ov-file#request
+        start_time = datetime.datetime.utcnow()
+        duration = datetime.timedelta(minutes=self._length_minutes)
         end_time = start_time + duration
         start_time_str = start_time.strftime('%Y-%m-%d %H:%M')
         end_time_str = end_time.strftime('%Y-%m-%d %H:%M')

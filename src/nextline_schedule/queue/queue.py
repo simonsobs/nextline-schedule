@@ -1,62 +1,64 @@
-import dataclasses
-import itertools
-from collections import deque
-from collections.abc import Iterable
-from datetime import datetime
+from collections.abc import AsyncIterator, Iterable
+from logging import getLogger
 from typing import Optional
 
+from nextline.utils import pubsub
 
-@dataclasses.dataclass
-class QueueItem:
-    id: int
-    name: str
-    created_at: datetime
-    script: str
+from .item import PushArg, QueueItem
+from .queue_imp import QueueImp
 
 
-@dataclasses.dataclass
-class PushArg:
-    name: str
-    script: str
-
-    def to_queue_item(self, id: int) -> QueueItem:
-        return QueueItem(
-            id=id,
-            name=self.name,
-            created_at=datetime.utcnow(),
-            script=self.script,
-        )
+class QueueEmpty(Exception):
+    pass
 
 
 class Queue:
     def __init__(self, items: Optional[Iterable[QueueItem]] = None):
-        items = list(items or [])
-        id_start = max(i.id for i in items) + 1 if items else 0
-        self._id_counter = itertools.count(id_start).__next__
-        self.items = deque(items)
-        self._map = {i.id: i for i in items}
+        self._pubsub = pubsub.PubSubItem[list[QueueItem]]()
+        self._queue = QueueImp(items)
+        self._logger = getLogger(__name__)
+
+    async def __call__(self) -> str:
+        item = await self.pop()
+        if item is None:
+            self._logger.info('Queue is empty')
+            raise QueueEmpty
+        return item.script
+
+    @property
+    def items(self):
+        return self._pubsub.latest()
+
+    def subscribe(self) -> AsyncIterator[list[QueueItem]]:
+        return self._pubsub.subscribe()
 
     def __len__(self) -> int:
-        return len(self.items)
+        return len(self._queue)
 
-    def push(self, arg: PushArg) -> QueueItem:
-        item = arg.to_queue_item(id=self._id_counter())
-        self.items.append(item)
-        self._map[item.id] = item
+    async def push(self, arg: PushArg) -> QueueItem:
+        item = self._queue.push(arg)
+        await self._pubsub.publish(list(self._queue.items))
         return item
 
-    def pop(self) -> QueueItem | None:
-        try:
-            item = self.items.popleft()
-            del self._map[item.id]
-            return item
-        except IndexError:
-            return None
-
-    def remove(self, id: int) -> bool:
-        item = self._map.get(id)
+    async def pop(self) -> QueueItem | None:
+        item = self._queue.pop()
         if item is None:
+            return None
+        await self._pubsub.publish(list(self._queue.items))
+        return item
+
+    async def remove(self, id: int) -> bool:
+        if not self._queue.remove(id):
             return False
-        self.items.remove(item)
-        del self._map[id]
+        await self._pubsub.publish(list(self._queue.items))
         return True
+
+    async def aclose(self) -> None:
+        await self._pubsub.close()
+
+    async def __aenter__(self) -> 'Queue':
+        await self._pubsub.publish(list(self._queue.items))
+        return self
+
+    async def __aexit__(self, *_, **__) -> None:
+        await self.aclose()

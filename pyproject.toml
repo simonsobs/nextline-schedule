@@ -37,6 +37,7 @@ tests = [
   "pytest-timeout>=2.1",
   "pytest>=7.0",
   "pytest-httpx>=0.21",
+  "deepdiff>=7.0",
 ]
 
 
@@ -92,5 +93,5 @@ profile = "black"
 plugins = "strawberry.ext.mypy_plugin"
 
 [[tool.mypy.overrides]]
-module = ["dynaconf.*", "async_asgi_testclient.*", "apluggy.*"]
+module = ["dynaconf.*", "async_asgi_testclient.*", "apluggy.*", "deepdiff.*"]
 ignore_missing_imports = true
