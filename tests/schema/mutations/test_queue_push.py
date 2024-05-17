@@ -2,8 +2,7 @@ from hypothesis import given
 from hypothesis import strategies as st
 
 from nextline_schedule.graphql import MUTATE_QUEUE_PUSH
-from nextline_schedule.queue import Queue
-from nextline_schedule.queue.strategies import st_push_arg, st_queue
+from nextline_schedule.queue.strategies import Queue, st_push_arg, st_queue
 from tests.schema.conftest import Schema
 
 

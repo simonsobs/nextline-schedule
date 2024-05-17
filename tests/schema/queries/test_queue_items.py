@@ -1,8 +1,7 @@
 from hypothesis import given
 
 from nextline_schedule.graphql import QUERY_QUEUE_ITEMS
-from nextline_schedule.queue import Queue
-from nextline_schedule.queue.strategies import st_queue
+from nextline_schedule.queue.strategies import Queue, st_queue
 from tests.schema.conftest import Schema
 
 

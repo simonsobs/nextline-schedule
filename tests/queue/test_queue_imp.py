@@ -1,7 +1,11 @@
 from hypothesis import given
 
-from nextline_schedule.queue import PushArg, QueueImp
-from nextline_schedule.queue.strategies import st_push_arg, st_queue_imp
+from nextline_schedule.queue.strategies import (
+    PushArg,
+    QueueImp,
+    st_push_arg,
+    st_queue_imp,
+)
 
 
 @given(queue=st_queue_imp())
