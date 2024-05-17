@@ -28,20 +28,21 @@ async def mutate_load_script(info: Info) -> bool:
     return True
 
 
+def mutate_update(info: Info, input: MutationSchedulerInput) -> bool:
+    scheduler = info.context['schedule']['scheduler']
+    assert isinstance(scheduler, Scheduler)
+    if input.api_url is not None:
+        scheduler._api_url = input.api_url
+    if input.length_minutes is not None:
+        scheduler._length_minutes = input.length_minutes
+    if input.policy is not None:
+        scheduler._policy = input.policy
+    return True
+
+
 @strawberry.type
 class MutationScheduler:
-    @strawberry.mutation
-    def update(self, info: Info, input: MutationSchedulerInput) -> bool:
-        scheduler = info.context['schedule']['scheduler']
-        assert isinstance(scheduler, Scheduler)
-        if input.api_url is not None:
-            scheduler._api_url = input.api_url
-        if input.length_minutes is not None:
-            scheduler._length_minutes = input.length_minutes
-        if input.policy is not None:
-            scheduler._policy = input.policy
-        return True
-
+    update: bool = strawberry.mutation(resolver=mutate_update)
     load_script: bool = strawberry.mutation(resolver=mutate_load_script)
 
 
