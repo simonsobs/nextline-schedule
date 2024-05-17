@@ -17,6 +17,17 @@ class MutationSchedulerInput:
     policy: Optional[str] = None
 
 
+async def mutate_load_script(info: Info) -> bool:
+    nextline = info.context["nextline"]
+    assert isinstance(nextline, Nextline)
+    scheduler = info.context['schedule']['scheduler']
+    assert callable(scheduler)
+    statement = await scheduler()
+    assert isinstance(statement, str)
+    await nextline.reset(statement=statement)
+    return True
+
+
 @strawberry.type
 class MutationScheduler:
     @strawberry.mutation
@@ -31,16 +42,7 @@ class MutationScheduler:
             scheduler._policy = input.policy
         return True
 
-
-async def mutate_load_script(info: Info) -> bool:
-    nextline = info.context["nextline"]
-    assert isinstance(nextline, Nextline)
-    scheduler = info.context['schedule']['scheduler']
-    assert callable(scheduler)
-    statement = await scheduler()
-    assert isinstance(statement, str)
-    await nextline.reset(statement=statement)
-    return True
+    load_script: bool = strawberry.mutation(resolver=mutate_load_script)
 
 
 @strawberry.type
@@ -55,6 +57,7 @@ class MutationSchedule:
 
     @strawberry.mutation
     async def load_script(self, info: Info) -> bool:
+        '''TODO: Deprecated. Moved to MutationScheduleScheduler.'''
         return await mutate_load_script(info)
 
     @strawberry.field
