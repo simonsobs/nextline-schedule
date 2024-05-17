@@ -1,0 +1,7 @@
+query ScheduleAutoModeState {
+  schedule {
+    autoMode {
+      state
+    }
+  }
+}

@@ -1,4 +1,4 @@
-mutation QueuePush($input: ScheduleQueuePushInput!) {
+mutation ScheduleQueuePush($input: ScheduleQueuePushInput!) {
   schedule {
     queue {
       push(input: $input) {

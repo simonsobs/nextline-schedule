@@ -10,7 +10,7 @@ from pytest_httpx import HTTPXMock
 from nextline_schedule.graphql import (
     MUTATE_AUTO_MODE_TURN_OFF,
     MUTATE_AUTO_MODE_TURN_ON,
-    QUERY_AUTO_MODE,
+    QUERY_AUTO_MODE_STATE,
     QUERY_SCHEDULER,
     SUBSCRIBE_AUTO_MODE_STATE,
 )
@@ -40,7 +40,7 @@ async def test_plugin(client: TestClient):
     }
     assert data == expected
 
-    data = await gql_request(client, QUERY_AUTO_MODE)
+    data = await gql_request(client, QUERY_AUTO_MODE_STATE)
     expected = {'schedule': {'autoMode': {'state': 'off'}}}
     assert data == expected
 
