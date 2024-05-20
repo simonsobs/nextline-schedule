@@ -18,12 +18,11 @@ env:
 
 jobs:
   run:
-    name: Python ${{ matrix.python-version }} on ${{ startsWith(matrix.os, 'macos-') && 'macOS' || 'Linux' }}
-    runs-on: ${{ matrix.os }}
+    name: Python ${{ matrix.python-version }} on Linux
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
         python-version: ["3.10", "3.11", "3.12"]
 
     steps:
@@ -37,7 +36,7 @@ jobs:
       - name: Install packages
         run: |
           pip install --upgrade pip
-          pip install --use-pep517 -e '.[host,tests]'
+          pip install -e '.[tests]'
           pip list
 
       - name: Run tests
