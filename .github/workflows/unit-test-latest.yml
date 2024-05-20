@@ -1,4 +1,8 @@
 name: Run unit tests with latest dependency versions
+# This workflow runs the unit tests with the latest versions of the
+# dependencies listed in `pyproject.toml`. The latest versions are specified in
+# `ci/latest/requirements.txt`. The `requirements.txt` file is updated by
+# Dependabot.
 
 on:
   push:
