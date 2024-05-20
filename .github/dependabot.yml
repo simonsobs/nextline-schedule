@@ -10,7 +10,7 @@ updates:
     schedule:
       interval: "daily"
   - package-ecosystem: "pip"
-    directory: "/ci"
+    directory: "/ci/latest"
     schedule:
       interval: "daily"
   - package-ecosystem: "github-actions"

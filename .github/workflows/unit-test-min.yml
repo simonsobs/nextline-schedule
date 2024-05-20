@@ -37,7 +37,7 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install -e '.[tests]'
-          pip install -r ci/minimum.txt
+          pip install -r ci/minimum/requirements.txt
           pip list
 
       - name: Run tests
