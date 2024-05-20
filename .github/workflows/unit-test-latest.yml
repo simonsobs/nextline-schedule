@@ -41,4 +41,4 @@ jobs:
           pip list
 
       - name: Run tests
-        run: pytest -vv
+        run: pytest -vv --cov --cov-report=xml
