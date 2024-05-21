@@ -1,4 +1,4 @@
-# Nextline Schedule
+# nextline-schedule
 
 [![PyPI - Version](https://img.shields.io/pypi/v/nextline-schedule.svg)](https://pypi.org/project/nextline-schedule)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/nextline-schedule.svg)](https://pypi.org/project/nextline-schedule)
