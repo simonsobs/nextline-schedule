@@ -38,3 +38,41 @@ class QueueImp:
         self.items.remove(item)
         del self._map[id]
         return True
+
+    def move_to_first(self, id: int) -> bool:
+        item = self._map.get(id)
+        if item is None:
+            return False
+        self.items.remove(item)
+        self.items.appendleft(item)
+        return True
+
+    def move_to_last(self, id: int) -> bool:
+        item = self._map.get(id)
+        if item is None:
+            return False
+        self.items.remove(item)
+        self.items.append(item)
+        return True
+
+    def move_one_forward(self, id: int) -> bool:
+        item = self._map.get(id)
+        if item is None:
+            return False
+        index = self.items.index(item)
+        if index == 0:
+            return False
+        self.items.remove(item)
+        self.items.insert(index - 1, item)
+        return True
+
+    def move_one_backward(self, id: int) -> bool:
+        item = self._map.get(id)
+        if item is None:
+            return False
+        index = self.items.index(item)
+        if index == len(self.items) - 1:
+            return False
+        self.items.remove(item)
+        self.items.insert(index + 1, item)
+        return True
