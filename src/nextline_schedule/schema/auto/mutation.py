@@ -29,6 +29,6 @@ async def mutate_change_mode(info: Info, mode: str) -> bool:
 
 @strawberry.type
 class MutationScheduleAutoMode:
-    turn_on: bool = strawberry.field(resolver=mutate_turn_on)
-    turn_off: bool = strawberry.field(resolver=mutate_turn_off)
-    change_mode: bool = strawberry.field(resolver=mutate_change_mode)
+    turn_on: bool = strawberry.mutation(resolver=mutate_turn_on)
+    turn_off: bool = strawberry.mutation(resolver=mutate_turn_off)
+    change_mode: bool = strawberry.mutation(resolver=mutate_change_mode)
