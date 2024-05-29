@@ -9,15 +9,15 @@ from .scheduler.mutation import mutate_load_script
 
 @strawberry.type
 class MutationSchedule:
-    @strawberry.field
+    @strawberry.mutation
     def auto_mode(self) -> MutationScheduleAutoMode:
         return MutationScheduleAutoMode()
 
-    @strawberry.field
+    @strawberry.mutation
     def scheduler(self) -> MutationScheduleScheduler:
         return MutationScheduleScheduler()
 
-    @strawberry.field
+    @strawberry.mutation
     def queue(self) -> MutationScheduleQueue:
         return MutationScheduleQueue()
 
@@ -29,6 +29,6 @@ class MutationSchedule:
 
 @strawberry.type
 class Mutation:
-    @strawberry.field
+    @strawberry.mutation
     def schedule(self) -> MutationSchedule:
         return MutationSchedule()

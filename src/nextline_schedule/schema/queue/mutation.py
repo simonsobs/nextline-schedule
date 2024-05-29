@@ -34,5 +34,5 @@ async def mutate_remove(info: Info, id: int) -> bool:
 
 @strawberry.type
 class MutationScheduleQueue:
-    push: ScheduleQueueItem = strawberry.field(resolver=mutate_push)
-    remove: bool = strawberry.field(resolver=mutate_remove)
+    push: ScheduleQueueItem = strawberry.mutation(resolver=mutate_push)
+    remove: bool = strawberry.mutation(resolver=mutate_remove)
