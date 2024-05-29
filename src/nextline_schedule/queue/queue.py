@@ -53,6 +53,30 @@ class Queue:
         await self._pubsub.publish(list(self._queue.items))
         return True
 
+    async def move_to_first(self, id: int) -> bool:
+        if not self._queue.move_to_first(id):
+            return False
+        await self._pubsub.publish(list(self._queue.items))
+        return True
+
+    async def move_to_last(self, id: int) -> bool:
+        if not self._queue.move_to_last(id):
+            return False
+        await self._pubsub.publish(list(self._queue.items))
+        return True
+
+    async def move_one_forward(self, id: int) -> bool:
+        if not self._queue.move_one_forward(id):
+            return False
+        await self._pubsub.publish(list(self._queue.items))
+        return True
+
+    async def move_one_backward(self, id: int) -> bool:
+        if not self._queue.move_one_backward(id):
+            return False
+        await self._pubsub.publish(list(self._queue.items))
+        return True
+
     async def aclose(self) -> None:
         await self._pubsub.close()
 
