@@ -68,4 +68,7 @@ class MutationScheduleQueueMove:
 class MutationScheduleQueue:
     push: ScheduleQueueItem = strawberry.mutation(resolver=mutate_push)
     remove: bool = strawberry.mutation(resolver=mutate_remove)
-    move: MutationScheduleQueueMove = MutationScheduleQueueMove()
+
+    @strawberry.mutation
+    def move(self) -> MutationScheduleQueueMove:
+        return MutationScheduleQueueMove()
