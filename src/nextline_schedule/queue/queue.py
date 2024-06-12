@@ -78,7 +78,7 @@ class Queue:
         return True
 
     async def aclose(self) -> None:
-        await self._pubsub.close()
+        await self._pubsub.aclose()
 
     async def __aenter__(self) -> 'Queue':
         await self._pubsub.publish(list(self._queue.items))
