@@ -62,7 +62,7 @@ class AutoMode:
 
     async def __aexit__(self, exc_type, exc_value, traceback) -> None:
         await self._machine.__aexit__(exc_type, exc_value, traceback)
-        await self._pubsub_mode.close()
+        await self._pubsub_mode.aclose()
 
     async def on_state_changed(self, state: str) -> None:
         if state == 'off':

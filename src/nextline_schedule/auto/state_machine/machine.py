@@ -83,7 +83,7 @@ class AutoModeStateMachine:
 
     async def close(self) -> None:
         await self._collect_tasks()
-        await self._pubsub_state.close()
+        await self._pubsub_state.aclose()
 
     async def __aenter__(self) -> 'AutoModeStateMachine':
         await self.start()
