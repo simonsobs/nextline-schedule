@@ -82,7 +82,8 @@ target_version = ['py310', 'py311', 'py312']
 [tool.coverage.run]
 branch = true
 parallel = true
-omit = ["src/nextline_schedule/__about__.py"]
+source = ["src/nextline_schedule", "tests"]
+# omit = ["src/nextline_schedule/__about__.py"]
 
 [tool.coverage.report]
 exclude_lines = ["no cov", "if __name__ == .__main__.:", "if TYPE_CHECKING:"]
