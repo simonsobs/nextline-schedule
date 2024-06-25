@@ -37,7 +37,7 @@ tests = [
   "pytest-cov>=3.0",
   "pytest-timeout>=2.1",
   "pytest>=7.0",
-  "pytest-httpx>=0.21",
+  "pytest-httpx>=0.21.3",
   "deepdiff>=7.0",
 ]
 
