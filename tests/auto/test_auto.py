@@ -1,6 +1,8 @@
 import asyncio
 
 from nextline import Nextline
+from nextline.events import OnStartRun
+from nextline.plugin.spec import hookimpl
 
 from nextline_schedule.auto import AutoMode
 
@@ -29,18 +31,38 @@ async def mock_queue() -> str:
     return STATEMENT_QUEUE
 
 
+class TurnOffAtRunThree:
+    def __init__(self, auto_mode: AutoMode, done: asyncio.Event) -> None:
+        self._auto_mode = auto_mode
+        self._done = done
+
+    @hookimpl
+    async def on_start_run(self, event: OnStartRun) -> None:
+        await self._turn_off_if_run_3(event)
+
+    async def _turn_off_if_run_3(self, event: OnStartRun) -> None:
+        if not event.run_no == 3:
+            return
+        await self._auto_mode.turn_off()
+        self._done.set()
+
+
 async def test_one() -> None:
     run_no = 1
     statement = STATEMENT_SCHEDULER.format(run_no=run_no)
     nextline = Nextline(statement=statement, run_no_start_from=run_no)
     scheduler = MockScheduler(nextline=nextline)
     auto_mode = AutoMode(nextline=nextline, scheduler=scheduler, queue=mock_queue)
+    done = asyncio.Event()
+    nextline.register(TurnOffAtRunThree(auto_mode, done))
 
     states = asyncio.create_task(subscribe_state(auto_mode))
 
     async with auto_mode:
         async with nextline:
-            await control(auto_mode, nextline)
+            assert auto_mode.state == 'off'
+            await auto_mode.turn_on()
+            await done.wait()
 
     expected = [
         'off',
@@ -52,15 +74,6 @@ async def test_one() -> None:
         'off',
     ]
     assert expected == await states
-
-
-async def control(auto_mode: AutoMode, nextline: Nextline):
-    assert auto_mode.state == 'off'  # type: ignore
-    await auto_mode.turn_on()  # type: ignore
-    async for run_info in nextline.subscribe_run_info():
-        if run_info.run_no == 3 and run_info.state == 'running':
-            break
-    await auto_mode.turn_off()  # type: ignore
 
 
 async def subscribe_state(auto_mode: AutoMode):
