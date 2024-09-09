@@ -3,6 +3,7 @@ from typing import Any, TypedDict
 from deepdiff import DeepDiff
 from hypothesis import Phase, given, settings
 from hypothesis import strategies as st
+from strawberry.types import ExecutionResult
 
 from nextline_schedule.graphql import MUTATE_QUEUE_PUSH
 from nextline_schedule.queue.strategies import Queue, st_push_arg, st_queue
@@ -40,6 +41,7 @@ async def test_schema(queue: Queue, input: Input, schema: Schema) -> None:
             context_value=context_values,
             variable_values=variable_values,
         )
+        assert isinstance(resp, ExecutionResult)
         assert (data := resp.data)
         assert_data(data, input)
         assert_queue_item(queue, data, input, len_ini)
