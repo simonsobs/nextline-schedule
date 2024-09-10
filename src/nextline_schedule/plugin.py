@@ -1,4 +1,4 @@
-from collections.abc import Mapping, MutableMapping
+from collections.abc import AsyncIterator, Mapping, MutableMapping
 from logging import getLogger
 from pathlib import Path
 from typing import Optional
@@ -42,7 +42,7 @@ class Plugin:
         return VALIDATORS
 
     @spec.hookimpl
-    def configure(self, settings: Dynaconf):
+    def configure(self, settings: Dynaconf) -> None:
         logger = getLogger(__name__)
         logger.info(f'{__package__} version: {__version__}')
         api_rul = settings.schedule.api
@@ -56,19 +56,19 @@ class Plugin:
         # self._scheduler = self._dummy
 
     @spec.hookimpl
-    def schema(self):
+    def schema(self) -> tuple[type, type, type]:
         return (Query, Mutation, Subscription)
 
     @spec.hookimpl
     @asynccontextmanager
-    async def lifespan(self, context: Mapping):
+    async def lifespan(self, context: Mapping) -> AsyncIterator[None]:
         nextline = context['nextline']
         self._queue = Queue()
         self._auto_mode = AutoMode(
             nextline=nextline, scheduler=self._scheduler, queue=self._queue
         )
-        async with self._queue, self._auto_mode as y:
-            yield y
+        async with self._queue, self._auto_mode:
+            yield
 
     @spec.hookimpl
     def update_strawberry_context(self, context: MutableMapping) -> None:

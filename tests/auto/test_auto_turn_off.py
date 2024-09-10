@@ -1,9 +1,10 @@
 import asyncio
 import time
+from collections.abc import Callable
 
 from nextline import Nextline
 
-from nextline_schedule.auto import AutoMode, AutoModeStateMachine
+from nextline_schedule.auto import AutoMode
 
 STATEMENT_QUEUE = '''
 """queue"""
@@ -16,15 +17,15 @@ async def mock_queue() -> str:
     return STATEMENT_QUEUE
 
 
-def f():
+def f() -> None:
     time.sleep(0.001)
 
 
-async def pull():
+async def pull() -> Callable[[], None]:
     return f
 
 
-async def test_turn_off_while_waiting():
+async def test_turn_off_while_waiting() -> None:
     run_no = 1
     nextline = Nextline(
         statement=f,
@@ -54,5 +55,5 @@ async def test_turn_off_while_waiting():
     assert expected == await states
 
 
-async def subscribe_state(auto_mode: AutoModeStateMachine):
+async def subscribe_state(auto_mode: AutoMode) -> list[str]:
     return [state async for state in auto_mode.subscribe_state()]

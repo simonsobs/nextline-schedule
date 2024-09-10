@@ -97,6 +97,7 @@ profile = "black"
 
 [tool.mypy]
 plugins = "strawberry.ext.mypy_plugin"
+disallow_untyped_defs = true
 
 [[tool.mypy.overrides]]
 module = ["dynaconf.*", "async_asgi_testclient.*", "apluggy.*", "deepdiff.*"]

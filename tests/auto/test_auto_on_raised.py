@@ -1,9 +1,11 @@
 import asyncio
 import time
+from collections.abc import Callable
+from typing import NoReturn
 
 from nextline import Nextline
 
-from nextline_schedule.auto import AutoMode, AutoModeStateMachine
+from nextline_schedule.auto import AutoMode
 
 STATEMENT_QUEUE = '''
 """queue"""
@@ -20,17 +22,17 @@ class MockError(Exception):
     pass
 
 
-def f():
+def f() -> None:
     time.sleep(0.001)
 
 
-def g():
+def g() -> NoReturn:
     time.sleep(0.001)
     raise MockError()
 
 
-async def test_on_raised_while_pulling():
-    async def pull():
+async def test_on_raised_while_pulling() -> None:
+    async def pull() -> NoReturn:
         raise MockError()
 
     run_no = 1
@@ -50,8 +52,8 @@ async def test_on_raised_while_pulling():
     assert expected == await states
 
 
-async def test_on_raised_while_running():
-    async def pull():
+async def test_on_raised_while_running() -> None:
+    async def pull() -> Callable[[], None]:
         return g
 
     run_no = 1
@@ -71,5 +73,5 @@ async def test_on_raised_while_running():
     assert expected == await states
 
 
-async def subscribe_state(auto_mode: AutoModeStateMachine):
+async def subscribe_state(auto_mode: AutoMode) -> list[str]:
     return [state async for state in auto_mode.subscribe_state()]

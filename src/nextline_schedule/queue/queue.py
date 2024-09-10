@@ -1,6 +1,6 @@
 from collections.abc import AsyncIterator, Iterable
 from logging import getLogger
-from typing import Optional
+from typing import Any, Optional
 
 from nextline.utils import pubsub
 
@@ -26,7 +26,7 @@ class Queue:
         return item.script
 
     @property
-    def items(self):
+    def items(self) -> list[QueueItem]:
         return self._pubsub.latest()
 
     def subscribe(self) -> AsyncIterator[list[QueueItem]]:
@@ -84,5 +84,5 @@ class Queue:
         await self._pubsub.publish(list(self._queue.items))
         return self
 
-    async def __aexit__(self, *_, **__) -> None:
+    async def __aexit__(self, *_: Any, **__: Any) -> None:
         await self.aclose()
