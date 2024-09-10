@@ -70,7 +70,7 @@ enter the pulling state
 '''
 
 
-AUTO_STATE_CONFIG = {
+_AUTO_SUB_STATE_CONFIG = {
     'name': 'auto',
     'children': ['waiting', 'pulling', 'running'],
     'initial': 'waiting',
@@ -84,7 +84,7 @@ AUTO_STATE_CONFIG = {
 
 CONFIG = {
     'name': 'global',
-    'states': ['created', 'off', AUTO_STATE_CONFIG],
+    'states': ['created', 'off', _AUTO_SUB_STATE_CONFIG],
     'transitions': [
         ['start', 'created', 'off'],
         ['turn_on', 'off', 'auto'],
