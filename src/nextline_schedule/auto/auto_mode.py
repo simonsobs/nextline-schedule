@@ -1,6 +1,6 @@
 import dataclasses
 from collections.abc import AsyncIterator, Awaitable, Callable
-from typing import Literal
+from typing import Any, Literal
 
 from nextline import Nextline
 from nextline.utils import pubsub
@@ -60,8 +60,8 @@ class AutoMode:
         await self._machine.__aenter__()
         return self
 
-    async def __aexit__(self, exc_type, exc_value, traceback) -> None:
-        await self._machine.__aexit__(exc_type, exc_value, traceback)
+    async def __aexit__(self, *args: Any, **kwargs: Any) -> None:
+        await self._machine.__aexit__(*args, **kwargs)
         await self._pubsub_mode.aclose()
 
     async def on_state_changed(self, state: str) -> None:

@@ -9,7 +9,7 @@ from nextline_schedule.queue.strategies import (
 
 
 @given(queue=st_queue_imp())
-def test_queue(queue: QueueImp):
+def test_queue(queue: QueueImp) -> None:
     # __len__
     assert len(queue) == len(queue.items)
 
@@ -18,7 +18,7 @@ def test_queue(queue: QueueImp):
 
 
 @given(queue=st_queue_imp(), push_arg=st_push_arg())
-def test_push(queue: QueueImp, push_arg: PushArg):
+def test_push(queue: QueueImp, push_arg: PushArg) -> None:
     initial_len = len(queue)
     item = queue.push(push_arg)
     assert item.script == push_arg.script
@@ -27,7 +27,7 @@ def test_push(queue: QueueImp, push_arg: PushArg):
 
 
 @given(queue=st_queue_imp())
-def test_pop(queue: QueueImp):
+def test_pop(queue: QueueImp) -> None:
     initial_len = len(queue)
     if initial_len == 0:
         assert queue.pop() is None
@@ -38,7 +38,7 @@ def test_pop(queue: QueueImp):
 
 
 @given(queue=st_queue_imp())
-def test_remove(queue: QueueImp):
+def test_remove(queue: QueueImp) -> None:
     initial_len = len(queue)
     if initial_len == 0:
         assert not queue.remove(0)

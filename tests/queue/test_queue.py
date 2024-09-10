@@ -8,7 +8,7 @@ from nextline_schedule.queue.strategies import st_push_arg, st_queue
 
 
 @given(st.data())
-async def test_queue(data: st.DataObject):
+async def test_queue(data: st.DataObject) -> None:
     queue = data.draw(st_queue())
 
     async def subscribe() -> list[list[QueueItem]]:
@@ -45,7 +45,7 @@ async def test_queue(data: st.DataObject):
                     await queue.push(arg)
                 case 'remove', _:
                     ids = [i.id for i in queue.items]
-                    ids.append(st.integers(min_value=0))
+                    ids.append(data.draw(st.integers(min_value=0)))
                     id = data.draw(st.sampled_from(ids))
                     success = await queue.remove(id)
                     if not success:

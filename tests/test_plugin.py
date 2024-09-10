@@ -24,7 +24,7 @@ async def client() -> AsyncIterator[TestClient]:
         yield y
 
 
-async def test_plugin(client: TestClient):
+async def test_plugin(client: TestClient) -> None:
     turned_on = asyncio.Event()
     task = asyncio.create_task(subscribe_auto_mode_state(client, turned_on))
 
@@ -62,7 +62,9 @@ async def test_plugin(client: TestClient):
     await task
 
 
-async def subscribe_auto_mode_state(client: TestClient, turned_on: asyncio.Event):
+async def subscribe_auto_mode_state(
+    client: TestClient, turned_on: asyncio.Event
+) -> list[str]:
     await turned_on.wait()
     ret = []
     async for data in gql_subscribe(client, SUBSCRIBE_AUTO_MODE_STATE):
@@ -74,7 +76,7 @@ async def subscribe_auto_mode_state(client: TestClient, turned_on: asyncio.Event
 
 
 @pytest.fixture(autouse=True)
-def configure_by_envvar(monkeypatch: pytest.MonkeyPatch):
+def configure_by_envvar(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv('NEXTLINE_SCHEDULE__API', 'https://example.com')
     monkeypatch.setenv('NEXTLINE_SCHEDULE__LENGTH_MINUTES', '60')
     monkeypatch.setenv('NEXTLINE_SCHEDULE__POLICY', 'test')
@@ -87,5 +89,5 @@ time.sleep(0.001)
 
 
 @pytest.fixture(autouse=True)
-def mock_httpx(httpx_mock: HTTPXMock):
+def mock_httpx(httpx_mock: HTTPXMock) -> None:
     httpx_mock.add_response(json={'commands': COMMANDS})

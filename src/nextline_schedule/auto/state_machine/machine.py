@@ -90,6 +90,5 @@ class AutoModeStateMachine:
         await self.start()
         return self
 
-    async def __aexit__(self, exc_type, exc_value, traceback) -> None:
-        del exc_type, exc_value, traceback
+    async def __aexit__(self, *_: Any, **__: Any) -> None:
         await self.close()

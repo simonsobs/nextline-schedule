@@ -76,5 +76,5 @@ async def test_one() -> None:
     assert expected == await states
 
 
-async def subscribe_state(auto_mode: AutoMode):
+async def subscribe_state(auto_mode: AutoMode) -> list[str]:
     return [state async for state in auto_mode.subscribe_state()]
