@@ -83,37 +83,21 @@ def build_state_machine(model=None, graph=False, asyncio=True, markup=False) -> 
             graph=graph, nested=True, asyncio=asyncio
         )
 
-    # Build a state machine with nested states from dict configs with "remap"
-    # in the way described in the docs:
-    # https://github.com/pytransitions/transitions/tree/0.9.0#reuse-of-previously-created-hsms
-
     auto_state_conf = {
         'name': 'auto',
-        'states': ['waiting', 'pulling', 'running'],
+        'children': ['waiting', 'pulling', 'running'],
+        'initial': 'waiting',
         'transitions': [
             ['on_initialized', 'waiting', 'pulling'],
             ['on_finished', 'waiting', 'pulling'],
             ['run', 'pulling', 'running'],
             ['on_finished', 'running', 'pulling'],
         ],
-        'initial': 'waiting',
-        'queued': True,
-        'ignore_invalid_triggers': True,
     }
-
-    # Ideally, we would be able to pass the auto_state_conf dict directly to
-    # the MachineClass constructor, but this doesn't work with "remap."
-    # Instead, we have to create a new instance of the MachineClass and pass it
-    # to the parent state machine.
-    auto_state = MachineClass(model=None, **auto_state_conf)  # type: ignore
 
     state_conf = {
         'name': 'global',
-        'states': [
-            'created',
-            'off',
-            {'name': 'auto', 'children': auto_state},
-        ],
+        'states': ['created', 'off', auto_state_conf],
         'transitions': [
             ['start', 'created', 'off'],
             ['turn_on', 'off', 'auto'],
