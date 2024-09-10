@@ -6,7 +6,7 @@ from typing import Any, Protocol
 from nextline.utils import pubsub
 from transitions.extensions.asyncio import HierarchicalAsyncMachine
 
-from .factory import CONFIG
+from .config import CONFIG
 
 
 class CallbackType(Protocol):

@@ -10,7 +10,7 @@ from transitions.extensions import HierarchicalAsyncGraphMachine
 from transitions.extensions.asyncio import HierarchicalAsyncMachine
 from transitions.extensions.markup import HierarchicalMarkupMachine
 
-from nextline_schedule.auto.state_machine.factory import CONFIG
+from nextline_schedule.auto.state_machine.config import CONFIG
 
 SELF_LITERAL = Machine.self_literal
 
