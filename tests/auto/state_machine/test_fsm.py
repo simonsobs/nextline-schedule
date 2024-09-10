@@ -32,7 +32,7 @@ def test_restore_from_markup():
 
 
 @pytest.mark.skip
-def test_graph():
+def test_graph():  # pragma: no cover
     machine = build_state_machine(model=Machine.self_literal, graph=True)
     machine.get_graph().draw('states.png', prog='dot')
 
