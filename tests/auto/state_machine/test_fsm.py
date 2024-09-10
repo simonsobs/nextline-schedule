@@ -1,40 +1,48 @@
 from copy import deepcopy
-from typing import Any
+from pathlib import Path
 from unittest.mock import AsyncMock
 
 import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
-from transitions import Machine, MachineError
+from transitions import Machine
+from transitions.extensions import HierarchicalAsyncGraphMachine
+from transitions.extensions.asyncio import HierarchicalAsyncMachine
 from transitions.extensions.markup import HierarchicalMarkupMachine
 
-from nextline_schedule.auto.state_machine.factory import build_state_machine
+from nextline_schedule.auto.state_machine.factory import CONFIG
+
+SELF_LITERAL = Machine.self_literal
 
 
-def test_model_default():
-    machine = build_state_machine()
+def test_model_default() -> None:
+    machine = HierarchicalAsyncMachine(model=None, **CONFIG)  # type: ignore
     assert not machine.models
 
 
-def test_model_self_literal():
-    machine = build_state_machine(model=Machine.self_literal)
+def test_model_self_literal() -> None:
+    machine = HierarchicalAsyncMachine(model=SELF_LITERAL, **CONFIG)  # type: ignore
     assert machine.models[0] is machine
     assert len(machine.models) == 1
 
 
-def test_restore_from_markup():
-    machine = build_state_machine(markup=True)
+def test_restore_from_markup() -> None:
+    machine = HierarchicalMarkupMachine(model=None, **CONFIG)  # type: ignore
     assert isinstance(machine.markup, dict)
     markup = deepcopy(machine.markup)
-    del markup['models']
-    rebuild = HierarchicalMarkupMachine(model=None, **markup)
+    del markup['models']  # type: ignore
+    rebuild = HierarchicalMarkupMachine(model=None, **markup)  # type: ignore
     assert rebuild.markup == machine.markup
 
 
 @pytest.mark.skip
-def test_graph():  # pragma: no cover
-    machine = build_state_machine(model=Machine.self_literal, graph=True)
-    machine.get_graph().draw('states.png', prog='dot')
+def test_graph(tmp_path: Path) -> None:  # pragma: no cover
+    FILE_NAME = 'states.png'
+    path = tmp_path / FILE_NAME
+    # print(f'Saving the state diagram to {path}...')
+    machine = HierarchicalAsyncGraphMachine(model=SELF_LITERAL, **CONFIG)  # type: ignore
+    machine.get_graph().draw(path, prog='dot')
+
 
 STATE_MAP = {
     'created': {
@@ -63,10 +71,11 @@ STATE_MAP = {
 
 TRIGGERS = list({trigger for v in STATE_MAP.values() for trigger in v.keys()})
 
+
 @settings(max_examples=200)
 @given(triggers=st.lists(st.sampled_from(TRIGGERS)))
 async def test_transitions(triggers: list[str]) -> None:
-    machine = build_state_machine(model=Machine.self_literal)
+    machine = HierarchicalAsyncMachine(model=SELF_LITERAL, **CONFIG)  # type: ignore
     assert machine.is_created()
 
     for trigger in triggers:
@@ -86,4 +95,3 @@ async def test_transitions(triggers: list[str]) -> None:
         if before:
             assert getattr(machine, before).call_count == 1
             assert getattr(machine, before).await_count == 1
-
