@@ -70,12 +70,6 @@ enter the pulling state
 '''
 
 
-from typing import Type
-
-from transitions import Machine
-from transitions.extensions import MachineFactory
-from transitions.extensions.markup import HierarchicalMarkupMachine
-
 AUTO_STATE_CONFIG = {
     'name': 'auto',
     'children': ['waiting', 'pulling', 'running'],
@@ -106,16 +100,3 @@ CONFIG = {
     'queued': True,
     'ignore_invalid_triggers': True,
 }
-
-
-def build_state_machine(model=None, graph=False, asyncio=True, markup=False) -> Machine:
-    MachineClass: Type[Machine]
-    if markup:
-        MachineClass = HierarchicalMarkupMachine
-    else:
-        MachineClass = MachineFactory.get_predefined(
-            graph=graph, nested=True, asyncio=asyncio
-        )
-
-    machine = MachineClass(model=model, **CONFIG)  # type: ignore
-    return machine

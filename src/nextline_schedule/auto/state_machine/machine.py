@@ -4,8 +4,9 @@ from logging import getLogger
 from typing import Any, Protocol
 
 from nextline.utils import pubsub
+from transitions.extensions.asyncio import HierarchicalAsyncMachine
 
-from .factory import build_state_machine
+from .factory import CONFIG
 
 
 class CallbackType(Protocol):
@@ -31,7 +32,7 @@ class AutoModeStateMachine:
         self._pubsub_state = pubsub.PubSubItem[str]()
         self._logger = getLogger(__name__)
 
-        machine = build_state_machine(model=self)
+        machine = HierarchicalAsyncMachine(model=self, **CONFIG)  # type: ignore
         machine.after_state_change = [self.after_state_change.__name__]
 
         self.state: str  # attached by machine
