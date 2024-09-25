@@ -2,7 +2,7 @@ from typing import Optional
 
 from hypothesis import strategies as st
 
-from nextline_schedule.utils.strategies import st_datetimes, st_python_scripts
+from nextline_test_utils.strategies import st_datetimes, st_python_scripts
 
 from .item import PushArg, QueueItem
 from .queue import Queue
