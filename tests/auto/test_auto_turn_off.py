@@ -3,7 +3,6 @@ import time
 from collections.abc import Callable
 
 from nextline import Nextline
-
 from nextline_schedule.auto import AutoMode
 
 STATEMENT_QUEUE = '''

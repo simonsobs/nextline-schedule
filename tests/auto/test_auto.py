@@ -3,7 +3,6 @@ import asyncio
 from nextline import Nextline
 from nextline.events import OnStartRun
 from nextline.plugin.spec import hookimpl
-
 from nextline_schedule.auto import AutoMode
 
 STATEMENT_SCHEDULER = '''

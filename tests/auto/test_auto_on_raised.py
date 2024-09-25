@@ -4,7 +4,6 @@ from collections.abc import Callable
 from typing import NoReturn
 
 from nextline import Nextline
-
 from nextline_schedule.auto import AutoMode
 
 STATEMENT_QUEUE = '''
