@@ -4,7 +4,6 @@ from typing import Any, Literal
 
 from nextline import Nextline
 from nextline.utils import pubsub
-
 from nextline_schedule.types import Statement
 
 from .callback import Callback, build_state_machine

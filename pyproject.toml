@@ -91,7 +91,7 @@ ignore = [
 max-complexity = 20
 
 [tool.ruff.lint.isort]
-#
+known-first-party = ["nextline", "nextlinegraphql"]
 
 [tool.coverage.run]
 branch = true

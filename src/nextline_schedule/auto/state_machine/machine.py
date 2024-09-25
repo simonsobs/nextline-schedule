@@ -3,8 +3,9 @@ from collections.abc import AsyncIterator, Callable
 from logging import getLogger
 from typing import Any, Protocol
 
-from nextline.utils import pubsub
 from transitions.extensions.asyncio import HierarchicalAsyncMachine
+
+from nextline.utils import pubsub
 
 from .config import CONFIG
 

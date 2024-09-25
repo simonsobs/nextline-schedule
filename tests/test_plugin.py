@@ -2,9 +2,6 @@ import asyncio
 from collections.abc import AsyncIterator
 
 import pytest
-from nextlinegraphql import create_app
-from nextlinegraphql.plugins.ctrl.graphql import SUBSCRIBE_STATE
-from nextlinegraphql.plugins.graphql.test import TestClient, gql_request, gql_subscribe
 from pytest_httpx import HTTPXMock
 
 from nextline_schedule.graphql import (
@@ -14,6 +11,9 @@ from nextline_schedule.graphql import (
     QUERY_SCHEDULER,
     SUBSCRIBE_AUTO_MODE_STATE,
 )
+from nextlinegraphql import create_app
+from nextlinegraphql.plugins.ctrl.graphql import SUBSCRIBE_STATE
+from nextlinegraphql.plugins.graphql.test import TestClient, gql_request, gql_subscribe
 
 
 @pytest.fixture

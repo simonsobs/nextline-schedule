@@ -1,9 +1,9 @@
 from typing import Optional
 
 import strawberry
-from nextline import Nextline
 from strawberry.types import Info
 
+from nextline import Nextline
 from nextline_schedule.scheduler import Scheduler
 
 
