@@ -7,7 +7,6 @@ nextline-graphql==0.7.8
 transitions==0.9.0
 httpx==0.23.0
 hypothesis==6.65.0
-black==23.10.0
 nextline-test-utils==0.1.0
 pytest-asyncio==0.18.0
 pytest-cov==3.0.0
