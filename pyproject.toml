@@ -33,6 +33,7 @@ dynamic = ["version"]
 
 [project.optional-dependencies]
 tests = [
+  "nextline-test-utils>=0.1",
   "pytest-asyncio>=0.18",
   "pytest-cov>=3.0",
   "pytest-timeout>=2.1",
@@ -91,7 +92,7 @@ ignore = [
 max-complexity = 20
 
 [tool.ruff.lint.isort]
-known-first-party = ["nextline", "nextlinegraphql"]
+known-first-party = ["nextline", "nextlinegraphql", "nextline_test_utils"]
 
 [tool.coverage.run]
 branch = true
