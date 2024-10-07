@@ -23,7 +23,12 @@ async def client() -> AsyncIterator[TestClient]:
         await asyncio.sleep(0)
         yield y
 
+# TODO: Update the test so that `can_send_already_matched_responses` is not needed
+#       This option is used to pass the test with `pytest-httpx>=0.32.0``
+#       https://github.com/Colin-b/pytest_httpx/releases/tag/v0.32.0
+#       https://github.com/Colin-b/pytest_httpx/blob/v0.32.0/README.md#allow-to-register-a-response-for-more-than-one-request
 
+@pytest.mark.httpx_mock(can_send_already_matched_responses=True)
 async def test_plugin(client: TestClient) -> None:
     turned_on = asyncio.Event()
     task = asyncio.create_task(subscribe_auto_mode_state(client, turned_on))
