@@ -5,15 +5,7 @@ from collections.abc import Callable
 from nextline import Nextline
 from nextline_schedule.auto import AutoMode
 
-STATEMENT_QUEUE = '''
-"""queue"""
-import time
-time.sleep(0.01)
-'''
-
-
-async def mock_queue() -> str:
-    return STATEMENT_QUEUE
+from .funcs import pull_func_factory
 
 
 def f() -> None:
@@ -25,15 +17,14 @@ async def pull() -> Callable[[], None]:
 
 
 async def test_turn_off_while_waiting() -> None:
-    run_no = 1
     nextline = Nextline(
         statement=f,
-        run_no_start_from=run_no,
         trace_threads=True,
         trace_modules=True,
         timeout_on_exit=60,
     )
-    auto_mode = AutoMode(nextline=nextline, scheduler=pull, queue=mock_queue)
+    queue = pull_func_factory('queue')
+    auto_mode = AutoMode(nextline=nextline, scheduler=pull, queue=queue)
 
     states = asyncio.create_task(subscribe_state(auto_mode))
 
