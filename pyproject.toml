@@ -22,8 +22,8 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
-  "nextline>=0.7.13",
-  "nextline-graphql>=0.7.8",
+  "nextline>=0.7.16",
+  "nextline-graphql>=0.7.9",
   "transitions>=0.9",
   "httpx>=0.23",
   "hypothesis>=6.88",
