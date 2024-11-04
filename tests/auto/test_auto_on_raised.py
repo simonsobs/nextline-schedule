@@ -6,15 +6,7 @@ from typing import NoReturn
 from nextline import Nextline
 from nextline_schedule.auto import AutoMode
 
-STATEMENT_QUEUE = '''
-"""queue"""
-import time
-time.sleep(0.01)
-'''
-
-
-async def mock_queue() -> str:
-    return STATEMENT_QUEUE
+from .funcs import pull_func_factory
 
 
 class MockError(Exception):
@@ -34,9 +26,9 @@ async def test_on_raised_while_pulling() -> None:
     async def pull() -> NoReturn:
         raise MockError()
 
-    run_no = 1
-    nextline = Nextline(statement=f, run_no_start_from=run_no, timeout_on_exit=60)
-    auto_mode = AutoMode(nextline=nextline, scheduler=pull, queue=mock_queue)
+    nextline = Nextline(statement=f, timeout_on_exit=60)
+    queue = pull_func_factory('queue')
+    auto_mode = AutoMode(nextline=nextline, scheduler=pull, queue=queue)
 
     states = asyncio.create_task(subscribe_state(auto_mode))
 
@@ -55,9 +47,9 @@ async def test_on_raised_while_running() -> None:
     async def pull() -> Callable[[], None]:
         return g
 
-    run_no = 1
-    nextline = Nextline(statement=f, run_no_start_from=run_no, timeout_on_exit=60)
-    auto_mode = AutoMode(nextline=nextline, scheduler=pull, queue=mock_queue)
+    nextline = Nextline(statement=f, timeout_on_exit=60)
+    queue = pull_func_factory('queue')
+    auto_mode = AutoMode(nextline=nextline, scheduler=pull, queue=queue)
 
     states = asyncio.create_task(subscribe_state(auto_mode))
 

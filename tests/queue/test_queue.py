@@ -21,6 +21,7 @@ class StatefulTest:
     async def context(self) -> AsyncIterator[None]:
         await asyncio.sleep(0)
         self._ids = [i.id for i in self._queue.items]
+        assert len(self._ids) == len(self._queue)
         yield
 
     async def _subscribe(self) -> list[list[QueueItem]]:

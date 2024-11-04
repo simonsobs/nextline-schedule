@@ -2,8 +2,8 @@
 # This file is used in a GitHub Actions workflow to test the compatibility.
 # This file needs to be manually updated to be consistent with
 # `pyproject.toml`.
-nextline==0.7.13
-nextline-graphql==0.7.8
+nextline==0.7.16
+nextline-graphql==0.7.9
 transitions==0.9.0
 httpx==0.23.0
 hypothesis==6.88.0

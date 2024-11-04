@@ -3,6 +3,19 @@ from datetime import datetime
 
 
 class DummyRequestStatement:
+    '''A mock scheduler for tests.
+
+    >>> async def main():
+    ...     scheduler = DummyRequestStatement()
+    ...     return await scheduler()
+
+    >>> import asyncio
+    >>> script = asyncio.run(main())
+    >>> code = compile(script, '<string>', 'exec')
+    >>> # exec(code, globals())
+
+    '''
+
     async def __call__(self) -> str:
         return generate_dummy_statement()
 
