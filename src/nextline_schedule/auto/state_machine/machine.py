@@ -68,7 +68,11 @@ class AutoModeStateMachine:
         await self._pubsub_state.publish(self.state)
 
     async def cancel_task(self) -> None:
-        self._task.cancel()
+        try:
+            self._task.cancel()
+            await self._task
+        except BaseException:
+            self._logger.exception('')
 
     async def _collect_tasks(self) -> None:
         if not self._tasks:
