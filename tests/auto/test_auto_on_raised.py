@@ -13,11 +13,11 @@ class MockError(Exception):
     pass
 
 
-def f() -> None:
+def f() -> None:  # pragma: no cover
     time.sleep(0.001)
 
 
-def g() -> NoReturn:
+def g() -> NoReturn:  # pragma: no cover
     time.sleep(0.001)
     raise MockError()
 
@@ -36,7 +36,7 @@ async def test_on_raised_while_pulling() -> None:
         async with nextline:
             await auto_mode.turn_on()
             async for state in auto_mode.subscribe_state():
-                if state == 'off':
+                if state == 'off':  # pragma: no branch
                     break
 
     expected = ['off', 'auto_waiting', 'auto_pulling', 'off']

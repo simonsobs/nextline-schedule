@@ -23,10 +23,12 @@ async def client() -> AsyncIterator[TestClient]:
         await asyncio.sleep(0)
         yield y
 
+
 # TODO: Update the test so that `can_send_already_matched_responses` is not needed
 #       This option is used to pass the test with `pytest-httpx>=0.32.0``
 #       https://github.com/Colin-b/pytest_httpx/releases/tag/v0.32.0
 #       https://github.com/Colin-b/pytest_httpx/blob/v0.32.0/README.md#allow-to-register-a-response-for-more-than-one-request
+
 
 @pytest.mark.httpx_mock(can_send_already_matched_responses=True)
 async def test_plugin(client: TestClient) -> None:
@@ -52,7 +54,7 @@ async def test_plugin(client: TestClient) -> None:
     data = await gql_request(client, MUTATE_AUTO_MODE_TURN_ON)
 
     n_runs = 0
-    async for data in gql_subscribe(client, SUBSCRIBE_STATE):
+    async for data in gql_subscribe(client, SUBSCRIBE_STATE):  # pragma: no branch
         if data['ctrlState'] == 'running':
             turned_on.set()
             n_runs += 1
@@ -60,7 +62,7 @@ async def test_plugin(client: TestClient) -> None:
             data = await gql_request(client, MUTATE_AUTO_MODE_TURN_OFF)
             break
 
-    async for data in gql_subscribe(client, SUBSCRIBE_STATE):
+    async for data in gql_subscribe(client, SUBSCRIBE_STATE):  # pragma: no branch
         if data['ctrlState'] == 'finished':
             break
 
@@ -72,7 +74,9 @@ async def subscribe_auto_mode_state(
 ) -> list[str]:
     await turned_on.wait()
     ret = []
-    async for data in gql_subscribe(client, SUBSCRIBE_AUTO_MODE_STATE):
+    async for data in gql_subscribe(
+        client, SUBSCRIBE_AUTO_MODE_STATE
+    ):  # pragma: no branch
         state = data['scheduleAutoModeState']
         ret.append(state)
         if state == 'off':

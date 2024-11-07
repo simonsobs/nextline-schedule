@@ -48,7 +48,7 @@ class StatefulTest:
         elif mode == 'scheduler':
             await until_true(lambda: self._auto_mode.mode == 'scheduler')
             await until_true(lambda: self._auto_mode.state.startswith('auto_'))
-        elif mode == 'queue':
+        elif mode == 'queue':  # pragma: no branch
             await until_true(lambda: self._auto_mode.mode == 'queue')
             await until_true(lambda: self._auto_mode.state.startswith('auto_'))
 

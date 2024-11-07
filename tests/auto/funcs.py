@@ -24,7 +24,7 @@ def pull_func_factory(name: str) -> PullFunc:
 async def until_state(
     nextline: Nextline, state: str = 'finished', count: int = 1
 ) -> None:
-    async for s in nextline.subscribe_state():
+    async for s in nextline.subscribe_state():  # pragma: no branch
         if s != state:
             continue
         count -= 1

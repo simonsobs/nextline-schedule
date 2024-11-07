@@ -8,11 +8,11 @@ from nextline_schedule.auto import AutoMode
 from .funcs import pull_func_factory
 
 
-def f() -> None:
+def f() -> None:  # pragma: no cover
     time.sleep(0.001)
 
 
-async def pull() -> Callable[[], None]:
+async def pull() -> Callable[[], None]:  # pragma: no cover
     return f
 
 
@@ -31,7 +31,7 @@ async def test_turn_off_while_waiting() -> None:
     async with auto_mode:
         async with nextline:
             await nextline.run()
-            async for prompt in nextline.prompts():
+            async for prompt in nextline.prompts():  # pragma: no branch
                 break
             await auto_mode.turn_on()
             await auto_mode.turn_off()
