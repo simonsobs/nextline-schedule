@@ -66,7 +66,7 @@ async def test_timeout(httpx_mock: HTTPXMock) -> None:
 
 
 @pytest.mark.skip
-async def test_with_dummy_server() -> None:
+async def test_with_dummy_server() -> None:  # pragma: no cover
     # https://simonsobs.slack.com/archives/D03TBRKRRQ9/p1689280148455099
     test_api_url = 'https://scheduler-uobd.onrender.com/api/v1/schedule/'
     func = Scheduler(api_url=test_api_url, length_minutes=1, policy='dummy')
