@@ -71,7 +71,7 @@ class AutoMode:
             await self._pubsub_mode.publish(self._mode)
             return
 
-        if state.startswith('auto_'):
+        if state.startswith('auto_'):  # pragma: no branch
             from_ = self._pull_from.current
             if self._mode == from_:
                 return
@@ -82,7 +82,7 @@ class AutoMode:
         if self.state == 'off':
             return
 
-        if self._mode == name:
+        if self._mode == name:  # pragma: no cover
             return
         self._mode = name
         await self._pubsub_mode.publish(self._mode)

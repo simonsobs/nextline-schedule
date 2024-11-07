@@ -36,8 +36,10 @@ async def test_until_state(data: st.DataObject) -> None:
             await auto_mode.turn_on()
             await until_state(nextline, state=state, count=count)
 
-            # TODO: Investigate why an error occurs without this sleep
-            await asyncio.sleep(0.0001)
+            # TODO: Without the sleep, the exception
+            # `asyncio.exceptions.CancelledError` is caught at
+            # https://github.com/simonsobs/nextline/blob/v0.7.18/nextline/fsm/callback.py#L65
+            # await asyncio.sleep(0.0001)
 
             await auto_mode.turn_off()
             await until_state(nextline)
