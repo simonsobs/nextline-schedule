@@ -5,11 +5,11 @@
 nextline==0.7.19
 nextline-graphql==0.7.9
 transitions==0.9.0
-httpx==0.23.0
+httpx==0.26.0
 hypothesis==6.88.0
 nextline-test-utils==0.1.0
 pytest-asyncio==0.18.0
 pytest-cov==3.0.0
-pytest==7.0.0
-pytest-httpx==0.21.3
+pytest==8.2.1
+pytest-httpx==0.29.0
 deepdiff==7.0.0
