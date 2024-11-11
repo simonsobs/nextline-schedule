@@ -60,4 +60,4 @@ async def test_schema(d: st.DataObject, schema: Schema) -> None:
     }
     assert DeepDiff(data, expected_data) == {}
 
-    queue.push.assert_called_once_with(PushArg(**input))
+    queue.push.assert_awaited_once_with(PushArg(**input))

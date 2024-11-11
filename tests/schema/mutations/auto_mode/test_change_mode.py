@@ -28,4 +28,4 @@ async def test_schema(mode: str, schema: Schema) -> None:
     expected = {'schedule': {'autoMode': {'changeMode': valid}}}
     assert DeepDiff(data, expected) == {}
     if valid:
-        auto_mode.change_mode.assert_called_once_with(mode)
+        auto_mode.change_mode.assert_awaited_once_with(mode)
