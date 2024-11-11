@@ -54,8 +54,8 @@ class StatefulTest:
 
     async def turn_on(self) -> None:
         await self._auto_mode.turn_on()
-        assert self._auto_mode.mode in ('scheduler', 'queue')
-        assert self._auto_mode.state.startswith('auto_')
+        await until_true(lambda: self._auto_mode.mode in ('scheduler', 'queue'))
+        await until_true(lambda: self._auto_mode.state.startswith('auto_'))
 
     async def turn_off(self) -> None:
         await self._auto_mode.turn_off()
