@@ -12,5 +12,6 @@ async def test_schema(schema: Schema) -> None:
     context_auto_mode = {'auto_mode': auto_mode}
     context = {'schedule': context_auto_mode}
     resp = await schema.execute(QUERY_AUTO_MODE_STATE, context_value=context)
-    assert resp.data
-    assert resp.data['schedule']['autoMode']['state'] == state
+    assert (data := resp.data)
+    expected = {'schedule': {'autoMode': {'state': state}}}
+    assert data == expected

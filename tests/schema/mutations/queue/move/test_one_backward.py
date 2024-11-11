@@ -31,4 +31,4 @@ async def test_schema(d: st.DataObject, schema: Schema) -> None:
     expected_data = {'schedule': {'queue': {'move': {'oneBackward': return_value}}}}
     assert DeepDiff(data, expected_data) == {}
 
-    queue.move_one_backward.assert_called_once_with(id)
+    queue.move_one_backward.assert_awaited_once_with(id)
