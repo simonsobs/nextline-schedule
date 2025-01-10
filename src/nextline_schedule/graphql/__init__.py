@@ -33,7 +33,7 @@ QUERY_VERSION = read_gql(sub / 'Version.gql')
 QUERY_AUTO_MODE_STATE = read_gql(sub / 'auto_mode' / 'State.gql')
 QUERY_AUTO_MODE_MODE = read_gql(sub / 'auto_mode' / 'Mode.gql')
 QUERY_QUEUE_ITEMS = read_gql(sub / 'queue' / 'Items.gql')
-QUERY_SCHEDULER = read_gql(sub / 'Scheduler.gql')
+QUERY_SCHEDULER = read_gql(sub / 'scheduler' / 'Scheduler.gql')
 
 sub = pwd / 'subscriptions'
 SUBSCRIBE_AUTO_MODE_STATE = read_gql(sub / 'ScheduleAutoModeState.gql')
