@@ -12,6 +12,7 @@ class MutationSchedulerUpdateInput:
     api_url: Optional[str] = None
     length_minutes: Optional[int] = None
     policy: Optional[str] = None
+    timeout: Optional[float] = None
 
 
 def mutate_update(info: Info, input: MutationSchedulerUpdateInput) -> bool:
@@ -23,6 +24,8 @@ def mutate_update(info: Info, input: MutationSchedulerUpdateInput) -> bool:
         scheduler._length_minutes = input.length_minutes
     if input.policy is not None:
         scheduler._policy = input.policy
+    if input.timeout is not None:
+        scheduler._timeout = input.timeout
     return True
 
 
