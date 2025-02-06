@@ -30,6 +30,7 @@ async def client() -> AsyncIterator[TestClient]:
 #       https://github.com/Colin-b/pytest_httpx/blob/v0.32.0/README.md#allow-to-register-a-response-for-more-than-one-request
 
 
+# @pytest.mark.skip
 @pytest.mark.httpx_mock(can_send_already_matched_responses=True)
 async def test_plugin(client: TestClient) -> None:
     turned_on = asyncio.Event()
@@ -42,6 +43,7 @@ async def test_plugin(client: TestClient) -> None:
                 'apiUrl': 'https://example.com',
                 'lengthMinutes': 60,
                 'policy': 'test',
+                'timeout': 10,
             }
         }
     }
@@ -89,6 +91,7 @@ def configure_by_envvar(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv('NEXTLINE_SCHEDULE__API', 'https://example.com')
     monkeypatch.setenv('NEXTLINE_SCHEDULE__LENGTH_MINUTES', '60')
     monkeypatch.setenv('NEXTLINE_SCHEDULE__POLICY', 'test')
+    monkeypatch.setenv('NEXTLINE_SCHEDULE__TIMEOUT', '10')
 
 
 COMMANDS = '''
