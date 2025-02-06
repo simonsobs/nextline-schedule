@@ -26,6 +26,7 @@ VALIDATORS = (
     Validator("SCHEDULE.API", must_exist=True, is_type_of=str),
     Validator("SCHEDULE.LENGTH_MINUTES", must_exist=True, is_type_of=int),
     Validator("SCHEDULE.POLICY", must_exist=True, is_type_of=str),
+    Validator("SCHEDULE.TIMEOUT", must_exist=True, is_type_of=(int, float)),
 )
 
 
@@ -49,10 +50,14 @@ class Plugin:
         api_rul = settings.schedule.api
         length_minutes = settings.schedule.length_minutes
         policy = settings.schedule.policy
+        timeout = settings.schedule.timeout
 
         self._dummy = DummyRequestStatement()
         self._scheduler = Scheduler(
-            api_url=api_rul, length_minutes=length_minutes, policy=policy
+            api_url=api_rul,
+            length_minutes=length_minutes,
+            policy=policy,
+            timeout=timeout,
         )
         # self._scheduler = self._dummy
 
