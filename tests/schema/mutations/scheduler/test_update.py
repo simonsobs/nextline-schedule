@@ -16,6 +16,14 @@ class Input(TypedDict):
     apiUrl: str | None
     lengthMinutes: int | None
     policy: str | None
+    timeout: float | None
+
+
+def st_timeouts() -> st.SearchStrategy[float]:
+    return st.one_of(
+        st.floats(min_value=1.0, allow_nan=False, allow_infinity=False),
+        st_graphql_ints(min_value=1),
+    )
 
 
 @st.composite
@@ -23,7 +31,13 @@ def st_input(draw: st.DrawFn) -> Input:
     apiUrl = draw(st_none_or(provisional.urls()))
     lengthMinutes = draw(st_none_or(st_graphql_ints(min_value=1)))
     policy = draw(st_none_or(st.text(ascii_letters, min_size=1)))
-    return {'apiUrl': apiUrl, 'lengthMinutes': lengthMinutes, 'policy': policy}
+    timeout = draw(st_none_or(st_timeouts()))
+    return {
+        'apiUrl': apiUrl,
+        'lengthMinutes': lengthMinutes,
+        'policy': policy,
+        'timeout': timeout,
+    }
 
 
 @settings(phases=(Phase.generate,))  # To avoid shrinking
@@ -34,11 +48,13 @@ async def test_schema(d: st.DataObject, schema: Schema) -> None:
     init_api_url = d.draw(provisional.urls())
     init_length_minutes = d.draw(st_graphql_ints(min_value=1))
     init_policy = d.draw(st.text(ascii_letters, min_size=1))
+    init_timeout = d.draw(st_timeouts())
 
     scheduler = Mock(spec=Scheduler)
     scheduler._api_url = init_api_url
     scheduler._length_minutes = init_length_minutes
     scheduler._policy = init_policy
+    scheduler._timeout = init_timeout
 
     context_values = {'schedule': {'scheduler': scheduler}}
     variable_values = {'input': input}
@@ -67,3 +83,8 @@ async def test_schema(d: st.DataObject, schema: Schema) -> None:
         assert scheduler._policy == input['policy']
     else:
         assert scheduler._policy == init_policy
+
+    if input['timeout'] is not None:
+        assert scheduler._timeout == input['timeout']
+    else:
+        assert scheduler._timeout == init_timeout

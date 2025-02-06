@@ -5,9 +5,7 @@ import httpx
 
 
 class Scheduler:
-    def __init__(
-        self, api_url: str, length_minutes: int, policy: str, timeout: float = 5.0
-    ):
+    def __init__(self, api_url: str, length_minutes: int, policy: str, timeout: float):
         self._api_url = api_url
         self._length_minutes = length_minutes
         self._policy = policy

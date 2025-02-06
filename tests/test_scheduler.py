@@ -31,7 +31,7 @@ async def test_success(httpx_mock: HTTPXMock) -> None:
         # 'status': 'ok',
     }
     httpx_mock.add_response(json=data)
-    func = Scheduler(api_url=MOCK_URL, length_minutes=1, policy='dummy')
+    func = Scheduler(api_url=MOCK_URL, length_minutes=1, policy='dummy', timeout=1)
 
     statement = await func()
     assert statement == COMMANDS
@@ -51,7 +51,7 @@ async def test_success(httpx_mock: HTTPXMock) -> None:
 
 async def test_400(httpx_mock: HTTPXMock) -> None:
     httpx_mock.add_response(status_code=400)
-    func = Scheduler(api_url=MOCK_URL, length_minutes=1, policy='dummy')
+    func = Scheduler(api_url=MOCK_URL, length_minutes=1, policy='dummy', timeout=1)
 
     with pytest.raises(RuntimeError):
         await func()
@@ -59,7 +59,7 @@ async def test_400(httpx_mock: HTTPXMock) -> None:
 
 async def test_timeout(httpx_mock: HTTPXMock) -> None:
     httpx_mock.add_exception(httpx.ReadTimeout('timeout'))
-    func = Scheduler(api_url=MOCK_URL, length_minutes=1, policy='dummy')
+    func = Scheduler(api_url=MOCK_URL, length_minutes=1, policy='dummy', timeout=1)
 
     with pytest.raises(httpx.TimeoutException):
         await func()
@@ -69,7 +69,7 @@ async def test_timeout(httpx_mock: HTTPXMock) -> None:
 async def test_with_dummy_server() -> None:  # pragma: no cover
     # https://simonsobs.slack.com/archives/D03TBRKRRQ9/p1689280148455099
     test_api_url = 'https://scheduler-uobd.onrender.com/api/v1/schedule/'
-    func = Scheduler(api_url=test_api_url, length_minutes=1, policy='dummy')
+    func = Scheduler(api_url=test_api_url, length_minutes=1, policy='dummy', timeout=1)
 
     statement = await func()
     print(statement)

@@ -7,6 +7,7 @@
 api = "https://scheduler-server.onrender.com/api/v1/schedule/"
 length_minutes = 1
 policy = '{"policy": "dummy", "config": {}}'
+timeout = 60
 
 [logging.loggers.nextline_schedule]
 handlers = ["default"]

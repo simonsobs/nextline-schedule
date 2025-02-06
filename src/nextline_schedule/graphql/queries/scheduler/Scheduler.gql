@@ -4,6 +4,7 @@ query Scheduler {
       apiUrl
       lengthMinutes
       policy
+      timeout
     }
   }
 }

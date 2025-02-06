@@ -22,6 +22,12 @@ def query_scheduler_policy(info: Info) -> str:
     return scheduler._policy
 
 
+def query_scheduler_timeout(info: Info) -> float:
+    scheduler = info.context['schedule']['scheduler']
+    assert isinstance(scheduler, Scheduler)
+    return scheduler._timeout
+
+
 @strawberry.type
 class ScheduleSchedulerPreviewItem:
     script: str
@@ -41,6 +47,7 @@ class QueryScheduleScheduler:
     api_url: str = strawberry.field(resolver=query_scheduler_api_url)
     length_minutes: int = strawberry.field(resolver=query_scheduler_length_minutes)
     policy: str = strawberry.field(resolver=query_scheduler_policy)
+    timeout: float = strawberry.field(resolver=query_scheduler_timeout)
     preview: ScheduleSchedulerPreviewItem = strawberry.field(
         resolver=query_scheduler_preview
     )
