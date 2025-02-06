@@ -26,3 +26,4 @@ pip install nextline-schedule
 | `NEXTLINE_SCHEDULE__API`            | `https://scheduler-uobd.onrender.com/api/v1/schedule/` | The [schedule API URL](https://github.com/simonsobs/scheduler-server?tab=readme-ov-file#schedule-api) |
 | `NEXTLINE_SCHEDULE__LENGTH_MINUTES` | 1                                                      |                                                                                                       |
 | `NEXTLINE_SCHEDULE__POLICY`         | `dummy`                                                |                                                                                                       |
+| `NEXTLINE_SCHEDULE__TIMEOUT`        | 60                                                     | The timeout in seconds                                                                                |
