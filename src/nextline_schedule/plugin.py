@@ -1,9 +1,9 @@
 from collections.abc import AsyncIterator, Mapping, MutableMapping
+from contextlib import asynccontextmanager
 from logging import getLogger
 from pathlib import Path
 from typing import Optional
 
-from apluggy import asynccontextmanager
 from dynaconf import Dynaconf, Validator
 
 from nextlinegraphql.hook import spec
