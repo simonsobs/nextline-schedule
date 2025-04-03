@@ -1,7 +1,7 @@
 # The exact requirements of the latest versions of the dependencies. This file
 # is used in a GitHub Actions workflow to test the compatibility with the
 # latest versions of the dependencies. This file is monitored by Dependabot.
-nextline==0.7.19
+nextline==0.7.20
 nextline-graphql==0.7.11
 transitions==0.9.2
 httpx==0.28.1
