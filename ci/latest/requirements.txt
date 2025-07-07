@@ -8,7 +8,7 @@ httpx==0.28.1
 hypothesis==6.131.18
 nextline-test-utils==0.1.2
 pytest-asyncio==1.0.0
-pytest-cov==6.1.1
+pytest-cov==6.2.1
 pytest==8.3.5
 pytest-httpx==0.35.0
 deepdiff==8.5.0
