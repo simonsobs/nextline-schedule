@@ -21,9 +21,10 @@ pip install nextline-schedule
 
 ## Configuration
 
-| Environment variable                | Default value                                          | Description                                                                                           |
-| ----------------------------------- | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
-| `NEXTLINE_SCHEDULE__API`            | `https://scheduler-uobd.onrender.com/api/v1/schedule/` | The [schedule API URL](https://github.com/simonsobs/scheduler-server?tab=readme-ov-file#schedule-api) |
-| `NEXTLINE_SCHEDULE__LENGTH_MINUTES` | 1                                                      |                                                                                                       |
-| `NEXTLINE_SCHEDULE__POLICY`         | `dummy`                                                |                                                                                                       |
-| `NEXTLINE_SCHEDULE__TIMEOUT`        | 60                                                     | The timeout in seconds                                                                                |
+| Environment variable                 | Default value                                          | Description                                                                                           |
+| ------------------------------------ | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
+| `NEXTLINE_SCHEDULE__API`             | `https://scheduler-uobd.onrender.com/api/v1/schedule/` | The [schedule API URL](https://github.com/simonsobs/scheduler-server?tab=readme-ov-file#schedule-api) |
+| `NEXTLINE_SCHEDULE__LENGTH_MINUTES`  | 1                                                      |                                                                                                       |
+| `NEXTLINE_SCHEDULE__POLICY`          | `dummy`                                                |                                                                                                       |
+| `NEXTLINE_SCHEDULE__TIMEOUT`         | 60                                                     | The timeout in seconds                                                                                |
+| `NEXTLINE_SCHEDULE__DUMMY_SCHEDULER` | `false`                                                | (For test) If `true`, use the dummy scheduler instead of the SO scheduler                             |
