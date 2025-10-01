@@ -14,6 +14,7 @@ class PluginSettings(TypedDict, total=False):
     length_minutes: int
     policy: str
     timeout: int | float
+    dummy_scheduler: bool
 
 
 DEFAULT = PluginSettings(
@@ -21,6 +22,7 @@ DEFAULT = PluginSettings(
     length_minutes=1,
     policy='{"policy": "dummy", "config": {}}',
     timeout=60,
+    dummy_scheduler=False,
 )
 
 
@@ -28,6 +30,7 @@ def test_default() -> None:
     plugin = Plugin()
     create_app_for_test(extra_plugins=[plugin])
     assert plugin._settings.schedule == DEFAULT
+    assert plugin._scheduler is not plugin._dummy
 
 
 def st_safe_text() -> st.SearchStrategy[str]:
@@ -55,6 +58,7 @@ def st_settings() -> st.SearchStrategy[PluginSettings]:
                 'timeout': st.one_of(
                     st.integers(), st.floats(allow_nan=False, allow_infinity=False)
                 ),
+                'dummy_scheduler': st.booleans(),
             },
         ),
     )
@@ -72,9 +76,13 @@ def test_property(s: PluginSettings, monkeypatch: MonkeyPatch) -> None:
             m.setenv('NEXTLINE_SCHEDULE__POLICY', json.dumps(s['policy']))
         if 'timeout' in s:
             m.setenv('NEXTLINE_SCHEDULE__TIMEOUT', f'{s["timeout"]}')
+        if 'dummy_scheduler' in s:
+            m.setenv('NEXTLINE_SCHEDULE__DUMMY_SCHEDULER', repr(s['dummy_scheduler']))
 
         plugin = Plugin()
         create_app_for_test(extra_plugins=[plugin])
 
         expected = {**DEFAULT, **s}
         assert plugin._settings.schedule == expected
+
+        assert (plugin._scheduler is plugin._dummy) == expected['dummy_scheduler']
