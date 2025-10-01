@@ -29,7 +29,12 @@ DEFAULT = PluginSettings(
 def test_default() -> None:
     plugin = Plugin()
     create_app_for_test(extra_plugins=[plugin])
-    assert plugin._settings.schedule == DEFAULT
+    expected = DEFAULT
+    assert plugin._settings.schedule == expected
+    assert plugin._scheduler._api_url == expected['api']
+    assert plugin._scheduler._length_minutes == expected['length_minutes']
+    assert plugin._scheduler._policy == expected['policy']
+    assert plugin._scheduler._timeout == expected['timeout']
     assert plugin._scheduler is not plugin._dummy
 
 
@@ -86,3 +91,9 @@ def test_property(s: PluginSettings, monkeypatch: MonkeyPatch) -> None:
         assert plugin._settings.schedule == expected
 
         assert (plugin._scheduler is plugin._dummy) == expected['dummy_scheduler']
+
+        if not expected['dummy_scheduler']:
+            assert plugin._scheduler._api_url == expected['api']
+            assert plugin._scheduler._length_minutes == expected['length_minutes']
+            assert plugin._scheduler._policy == expected['policy']
+            assert plugin._scheduler._timeout == expected['timeout']
