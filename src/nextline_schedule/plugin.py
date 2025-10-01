@@ -27,6 +27,7 @@ VALIDATORS = (
     Validator("SCHEDULE.LENGTH_MINUTES", must_exist=True, is_type_of=int),
     Validator("SCHEDULE.POLICY", must_exist=True, is_type_of=str),
     Validator("SCHEDULE.TIMEOUT", must_exist=True, is_type_of=(int, float)),
+    Validator("SCHEDULE.DUMMY_SCHEDULER", must_exist=True, is_type_of=bool),
 )
 
 
@@ -47,19 +48,18 @@ class Plugin:
     def configure(self, settings: Dynaconf) -> None:
         logger = getLogger(__name__)
         logger.info(f'{__package__} version: {__version__}')
-        api_rul = settings.schedule.api
-        length_minutes = settings.schedule.length_minutes
-        policy = settings.schedule.policy
-        timeout = settings.schedule.timeout
+        self._settings = settings
 
         self._dummy = DummyRequestStatement()
         self._scheduler = Scheduler(
-            api_url=api_rul,
-            length_minutes=length_minutes,
-            policy=policy,
-            timeout=timeout,
+            api_url=settings.schedule.api,
+            length_minutes=settings.schedule.length_minutes,
+            policy=settings.schedule.policy,
+            timeout=settings.schedule.timeout,
         )
-        # self._scheduler = self._dummy
+        if settings.schedule.dummy_scheduler:
+            logger.info('Using dummy scheduler as per configuration.')
+            self._scheduler = self._dummy  # type: ignore
 
     @spec.hookimpl
     def schema(self) -> tuple[type, type, type]:
