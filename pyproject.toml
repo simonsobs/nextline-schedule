@@ -24,7 +24,7 @@ classifiers = [
 ]
 dependencies = [
   "nextline>=0.7.19",
-  "nextline-graphql>=0.7.9",
+  "nextline-graphql>=0.8.0",
   "transitions>=0.9",
   "httpx>=0.26",
   "hypothesis>=6.88",
