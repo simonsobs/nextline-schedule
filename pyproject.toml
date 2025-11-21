@@ -30,7 +30,7 @@ dependencies = [
   "hypothesis>=6.88",
 ]
 
-[project.optional-dependencies]
+[dependency-groups]
 tests = [
   "nextline-test-utils>=0.1",
   "pytest-asyncio>=0.18",
