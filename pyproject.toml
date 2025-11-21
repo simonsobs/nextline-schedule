@@ -4,14 +4,13 @@ build-backend = "hatchling.build"
 
 [project]
 name = "nextline-schedule"
+dynamic = ["version"]
 description = 'A plugin of nextline-graphql. An interface to the SO scheduler.'
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
-keywords = []
-authors = [
-  { name = "Simons Observatory", email = "so_software@simonsobservatory.org" },
-]
+license-files = ["LICENSE.txt"]
+authors = [{ name = "Tai Sakuma" }]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Science/Research",
@@ -22,6 +21,7 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
 ]
+keywords = ["nextline", "plugin", "graphql", "schedule", "queue", "automation"]
 dependencies = [
   "nextline>=0.7.19",
   "nextline-graphql>=0.8.0",
@@ -29,7 +29,6 @@ dependencies = [
   "httpx>=0.26",
   "hypothesis>=6.88",
 ]
-dynamic = ["version"]
 
 [project.optional-dependencies]
 tests = [
@@ -41,7 +40,7 @@ tests = [
   "pytest-httpx>=0.29",
   "deepdiff>=7.0",
 ]
-
+type-check = ["mypy>=1.0"]
 
 [project.urls]
 Documentation = "https://github.com/simonsobs/nextline-schedule#readme"
@@ -54,6 +53,7 @@ schedule = "nextline_schedule:Plugin"
 [tool.hatch.version]
 source = "regex_commit"
 path = "src/nextline_schedule/__about__.py"
+check_dirty = false
 tag_sign = false
 
 [tool.pytest.ini_options]

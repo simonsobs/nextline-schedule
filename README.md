@@ -7,7 +7,7 @@
 [![Test Status](https://github.com/simonsobs/nextline-schedule/actions/workflows/type-check.yml/badge.svg)](https://github.com/simonsobs/nextline-schedule/actions/workflows/type-check.yml)
 [![codecov](https://codecov.io/gh/simonsobs/nextline-schedule/branch/main/graph/badge.svg)](https://codecov.io/gh/simonsobs/nextline-schedule)
 
-A plugin for [nextline-graphql](https://github.com/simonsobs/nextline-graphql) with the following features:
+A plugin for [nextline-graphql](https://github.com/nextline-dev/nextline-graphql) with the following features:
 
 - The **auto mode**
 - The **queue** system

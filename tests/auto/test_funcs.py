@@ -38,7 +38,7 @@ async def test_until_state(data: st.DataObject) -> None:
 
             # TODO: Without the sleep, the exception
             # `asyncio.exceptions.CancelledError` is caught at
-            # https://github.com/simonsobs/nextline/blob/v0.7.18/nextline/fsm/callback.py#L65
+            # https://github.com/nextline-dev/nextline/blob/v0.7.18/nextline/fsm/callback.py#L65
             # await asyncio.sleep(0.0001)
 
             await auto_mode.turn_off()
