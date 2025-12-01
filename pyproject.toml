@@ -93,7 +93,7 @@ ignore = [
 max-complexity = 20
 
 [tool.ruff.lint.isort]
-known-first-party = ["nextline", "nextlinegraphql", "nextline_test_utils"]
+known-first-party = ["nextline", "nextline_graphql", "nextline_test_utils"]
 
 [tool.coverage.run]
 branch = true

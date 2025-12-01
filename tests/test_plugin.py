@@ -1,9 +1,9 @@
 import asyncio
 
+from nextline_graphql.factory import create_app_for_test
+from nextline_graphql.plugins.graphql.test import TestClient, gql_request
 from nextline_schedule import Plugin
 from nextline_schedule.graphql import QUERY_AUTO_MODE_STATE
-from nextlinegraphql.factory import create_app_for_test
-from nextlinegraphql.plugins.graphql.test import TestClient, gql_request
 
 
 async def test_app() -> None:
