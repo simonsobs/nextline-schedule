@@ -6,7 +6,7 @@ from typing import Optional
 
 from dynaconf import Dynaconf, Validator
 
-from nextlinegraphql.hook import spec
+from nextline_graphql.hook import spec
 
 from .__about__ import __version__
 from .auto import AutoMode

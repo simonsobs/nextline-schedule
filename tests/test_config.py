@@ -5,8 +5,8 @@ from hypothesis import HealthCheck, given, provisional, settings
 from hypothesis import strategies as st
 from pytest import MonkeyPatch
 
+from nextline_graphql.factory import create_app_for_test
 from nextline_schedule import Plugin
-from nextlinegraphql.factory import create_app_for_test
 
 
 class PluginSettings(TypedDict, total=False):
